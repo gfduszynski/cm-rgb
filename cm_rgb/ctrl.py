@@ -24,6 +24,7 @@ class CMRGBController:
     VENDOR_ID = 0x2516
     PRODUCT_ID = 0x0051
     PRODUCT_STR = 'CYRM02p0303h00E0r0100'
+    IFACE_NUM = 1
 
     @staticmethod
     def new_packet(fill, *args):
@@ -50,7 +51,7 @@ class CMRGBController:
 
     def __init_hid_device(self):
         device_list = [x for x in hid.enumerate(self.VENDOR_ID, self.PRODUCT_ID)
-                       if x['product_string'] == self.PRODUCT_STR]
+                       if x['interface_number'] == self.IFACE_NUM]
         if len(device_list) == 0:
             raise Exception("No devices found")
 
