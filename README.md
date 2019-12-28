@@ -14,11 +14,12 @@ NOTE: I’m running this as root.
 
 ### Usage
 
+
 ```
 cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
 ```
 
-In order to make settings persistent append ‘’’save’’’
+In order to make settings persistent append ``save``
 
 ```
 cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 –brightness=1 save
@@ -27,6 +28,11 @@ cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mo
 You can also restore previously saved settings by running
 ```
 cm-rgb-cli restore
+```
+
+Check help for details on each command
+```
+cm-rgb-cli logo --help
 ```
 
 Much more flexibility is achievable by using the library directly instead of CLI.
