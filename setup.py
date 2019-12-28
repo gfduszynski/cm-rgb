@@ -18,7 +18,7 @@ setup(
     keywords = "rgb hid wraith",
     url = "http://github.com/cm-rgb",
     packages=['cm_rgb'],
-    scripts=['scripts/cli.py'],
+    scripts=['scripts/cm-rgb-cli.py'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",

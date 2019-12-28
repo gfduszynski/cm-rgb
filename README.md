@@ -1,2 +1,12 @@
-# wraith-prtism-rgb
-Controll your Wraith Prism RGB ithout bloatware on any OS
+﻿##Control your Wraith Prism RGB without bloatware on Linux
+
+
+### Installation
+‘’’
+pip install cm-rgb
+‘’’
+
+
+
+‘’’
+‘’’
