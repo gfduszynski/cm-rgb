@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "cm-rgb",
-    version = "0.0.2",
+    version = "0.0.3",
     author = "gfduszynski",
     author_email = "gfduszynski@gmail.com",
     description = ("Utility to control RGB on AMD Wraith Prism"),
@@ -18,7 +18,7 @@ setup(
     keywords = "rgb hid wraith",
     url = "http://github.com/cm-rgb",
     packages=['cm_rgb'],
-    scripts=['scripts/cm-rgb-cli.py'],
+    scripts=['scripts/cm-rgb-cli'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
