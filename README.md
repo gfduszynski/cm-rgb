@@ -1,5 +1,5 @@
 ## Control your Wraith Prism RGB without bloatware on Linux
-
+![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/IMG_2521.JPG)
 
 ### Installation
 ```
