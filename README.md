@@ -1,5 +1,6 @@
 ## Control your Wraith Prism RGB without bloatware on Linux
-![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/IMG_2521.JPG)
+![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-demo.jpg)
+![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
 ### Installation
 
@@ -32,6 +33,11 @@ NOTE: I’m running this as root.
 
 ### Usage
 
+Included there is a sample script that allows for displaying cpu utilization with ring LED's.
+```
+cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF
+```
+
 
 ```
 cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
@@ -46,6 +52,11 @@ cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mo
 You can also restore previously saved settings by running
 ```
 cm-rgb-cli restore
+```
+
+If LED lights disgust you, use this to turn them off.
+```
+cm-rgb-cli logo --mode=off save
 ```
 
 Check help for details on each command
