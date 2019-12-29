@@ -1,6 +1,8 @@
 ## Control your Wraith Prism RGB without bloatware on Linux
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
+**cm-rgb-monitor** _showing realtime cpu utilization._
+
 ### Installation
 
 Make sure you have dev libraries for hidapi.
