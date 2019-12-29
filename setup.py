@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "cm-rgb",
-    version = "0.0.5",
+    version = "0.0.6",
     author = "gfduszynski",
     author_email = "gfduszynski@gmail.com",
     description = ("Utility to control RGB on AMD Wraith Prism"),
