@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+from cm_rgb.ctrl import LedChannel, LedMode, CMRGBController
+import psutil
+import atexit
+import time
+import click
+
+@click.command()
+@click.option("--bg-color",'bgColor', default='#00FFFF', help="Background LED's color")
+@click.option("--cpu-color",'cpuColor', default='#FFA500', help="Color of the cpu load LED's")
+@click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option('--interval', type=click.IntRange(1, 60, clamp=True), default=3)
+def monitor(bgColor, cpuColor, brightness, interval):
+    c = CMRGBController()
+
+    bgChannel = LedChannel.R_STATIC
+    cpuChannel = LedChannel.R_SWIRL
+
+    b = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+
+    bgColor = bgColor.lstrip('#')
+    col = [int(bgColor[i:i+2], 16) for i in (0, 2, 4)]
+    c.set_channel(bgChannel,  LedMode.R_DEFAULT, b, col[0], col[1], col[2])
+
+    cpuColor = cpuColor.lstrip('#')
+    col = [int(cpuColor[i:i+2], 16) for i in (0, 2, 4)]
+    c.set_channel(cpuChannel, LedMode.R_DEFAULT, b, col[0], col[1], col[2], 0x60)
+    
+    c.apply()
+
+
+    def exit_handler():
+        c.restore()
+
+    atexit.register(exit_handler)
+
+    while True:
+        # gives a single float value
+        cpu = psutil.cpu_percent()
+        cpu_leds = int(round(cpu*15 / 100))
+
+        total = 15 - cpu_leds
+
+        ring_leds = ([cpuChannel]*cpu_leds)
+        ring_leds = ring_leds + ([bgChannel]*total)
+
+        shift = -8
+        ring_leds = ring_leds[-shift:]+ring_leds[:-shift]
+
+        c.assign_leds_to_channels(LedChannel.LOGO, LedChannel.FAN, *ring_leds)
+        c.apply()
+
+
+        time.sleep(interval)
+
+
+if __name__ == '__main__':
+    monitor()

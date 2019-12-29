@@ -18,7 +18,7 @@ setup(
     keywords = "rgb hid wraith",
     url = "http://github.com/cm-rgb",
     packages=['cm_rgb'],
-    scripts=['scripts/cm-rgb-cli'],
+    scripts=['scripts/cm-rgb-cli','scripts/cm-rgb-monitor'],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     classifiers=[
@@ -28,6 +28,7 @@ setup(
     ],
     install_requires=[
           'hidapi',
-          'click'
+          'click' ,
+          'psutil'
     ],
 )
