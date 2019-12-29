@@ -10,6 +10,7 @@ pip install cm-rgb
 
 Script must have access to USB device to function properly.
 It would be wise not to run this as root.
+
 NOTE: I’m running this as root.
 
 ### Usage
