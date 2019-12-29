@@ -1,5 +1,4 @@
 ## Control your Wraith Prism RGB without bloatware on Linux
-![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-demo.jpg)
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
 ### Installation
