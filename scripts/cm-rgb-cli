@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+
+from cm_rgb.ctrl import LedChannel, LedMode, CMRGBController
+import click
+
+@click.group(chain=True)
+@click.pass_context
+def cli(ctx):
+    ctx.obj = {
+        'logo': {'mode': 'off'},
+        'fan' : {'mode': 'off'},
+        'ring': {'mode': 'off'},
+        'save': False,
+        'restore': False
+    }
+    pass
+
+@cli.resultcallback()
+@click.pass_context
+def process_pipeline(ctx,processors):
+    c = CMRGBController()
+
+    if ctx.obj['restore']:
+        c.restore()
+    else:
+        # LOGO handling
+        l = ctx.obj['logo']
+
+        lChannel = LedChannel.OFF
+
+        if l['mode'] != 'off':
+            c.set_channel(LedChannel.LOGO, LedMode[l['mode'].upper()], l['brightness'], l['color'][0], l['color'][1], l['color'][2], l['speed'])
+            lChannel = LedChannel.LOGO
+
+
+        # FAN handling
+        f = ctx.obj['fan']
+
+        fChannel = LedChannel.OFF
+
+        if f['mode'] != 'off':
+            c.set_channel(LedChannel.FAN, LedMode[f['mode'].upper()], f['brightness'], f['color'][0], f['color'][1], f['color'][2], f['speed'])
+            fChannel = LedChannel.FAN
+
+
+        # RING handling
+        r = ctx.obj['ring']
+
+        rChannels = [LedChannel.OFF]*15
+
+        if r['mode'] == 'static':
+            c.set_channel(LedChannel.R_STATIC, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
+            rChannels = [LedChannel.R_STATIC]*15
+
+        if r['mode'] == 'breathe':
+            c.set_channel(LedChannel.R_BREATHE, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
+            rChannels = [LedChannel.R_BREATHE]*15
+
+        if r['mode'] == 'swirl':
+            c.set_channel(LedChannel.R_SWIRL, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
+            rChannels = [LedChannel.R_SWIRL]*15
+
+
+        # Map LED's
+        c.assign_leds_to_channels(lChannel, fChannel, *rChannels)
+
+        # Apply above
+        c.apply()
+
+        if ctx.obj['save']:
+            c.save()
+
+
+@cli.command('logo')
+@click.option('--color','color', default='#00FFFF')
+@click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
+@click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.pass_context
+def setup_logo(ctx, mode, color, brightness, speed):
+    l = {}
+
+    l['mode'] = mode
+
+    color = color.lstrip('#')
+    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+
+    l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+
+    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+
+    ctx.obj['logo'] = l
+
+@cli.command('fan')
+@click.option('--color','color', default='#00FFFF')
+@click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
+@click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.pass_context
+def setup_fan(ctx, mode, color, brightness, speed):
+    l = {}
+
+    l['mode'] = mode
+
+    color = color.lstrip('#')
+    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+
+    l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+
+    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+
+    ctx.obj['fan'] = l
+
+
+@cli.command('ring')
+@click.option('--color','color', default='#00FFFF')
+@click.option('--mode', type=click.Choice(['off', 'static', 'breathe', 'swirl'], case_sensitive=False), default='static')
+@click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.pass_context
+def setup_ring(ctx, mode, color, brightness, speed):
+    l = {}
+
+    l['mode'] = mode
+
+    color = color.lstrip('#')
+    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+
+    if mode == 'swirl':
+        l['speed'] = [0x90,0x85,0x77,0x74,0x70][speed-1]
+    else:
+        l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+
+
+    ctx.obj['ring'] = l
+
+
+@cli.command('save')
+@click.pass_context
+def save(ctx):
+    ctx.obj['save'] = True
+
+
+@cli.command('restore')
+@click.pass_context
+def save(ctx):
+    ctx.obj['restore'] = True
+
+
+if __name__ == '__main__':
+    cli()
