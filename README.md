@@ -37,7 +37,7 @@ Included there is a sample script that allows for displaying cpu utilization wit
 cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF
 ```
 
-
+Example of CLI usage
 ```
 cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
 ```
