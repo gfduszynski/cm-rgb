@@ -144,7 +144,7 @@ def save(ctx):
 
 @cli.command('restore')
 @click.pass_context
-def save(ctx):
+def restore(ctx):
     ctx.obj['restore'] = True
 
 
