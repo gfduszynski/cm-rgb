@@ -2,6 +2,23 @@
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/IMG_2521.JPG)
 
 ### Installation
+
+Make sure you have dev libraries for hidapi.
+
+##### Ubuntu
+```
+sudo apt-get install python-dev libusb-1.0-0-dev libudev-dev
+```
+
+##### Other distros
+It's possible you already have what it takes to install pip package so try that.
+If you have any problems regarding hidapi installation see: `` https://github.com/trezor/cython-hidapi ``
+Your issue may already have a solution there.
+
+If you still have a problem please create an issue :)
+
+##### Finally
+Now you can install pip package.
 ```
 pip install cm-rgb
 ```
