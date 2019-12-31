@@ -22,6 +22,9 @@ def process_pipeline(ctx,processors):
 
     if ctx.obj['restore']:
         c.restore()
+
+    elif ctx.obj['version']:
+        print(c.getVersion())
     else:
         # LOGO handling
         l = ctx.obj['logo']
@@ -147,6 +150,11 @@ def save(ctx):
 def restore(ctx):
     ctx.obj['restore'] = True
 
+
+@cli.command('version')
+@click.pass_context
+def version(ctx):
+    ctx.obj['version'] = True
 
 if __name__ == '__main__':
     cli()

@@ -44,6 +44,7 @@ class CMRGBController:
     P_MAGIC_2 = new_packet.__func__(0, 0x51, 0x96)
     P_MIRAGE_OFF = new_packet.__func__(0, 0x51, 0x71, 0x00, 0x00, 0x01, 0x00, 0xFF, 0x4A, 0x02, 0x00, 0xFF, 0x4A, 0x03,
                                        0x00, 0xFF, 0x4A, 0x04, 0x00, 0xFF, 0x4A)
+    P_GET_VER = new_packet.__func__(0, 0x12, 0x20)                                   
 
     def __init__(self):
         self.__init_hid_device()
@@ -86,6 +87,21 @@ class CMRGBController:
         self.send_packet(self.P_POWER_OFF)
         self.send_packet(self.P_RESTORE)
         self.apply()
+
+    def getVersion(self):
+        reply = self.send_packet(self.P_GET_VER)
+        fv = bytearray(16)
+
+        i = 0
+        while i < 16 :
+            if reply[i + 0x08] != 0 :
+                fv[int(i / 2)] = fv[int(i / 2)] + reply[i + 0x08]
+            else:
+                break
+            i+=2
+
+        return fv.decode("utf-8")
+
 
     # color_source 0x20 takes supplied color for breathe mode
     def set_channel(self, channel, mode, brightness, r, g, b, speed=0xff, color_source=0x20):
