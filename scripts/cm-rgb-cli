@@ -11,7 +11,8 @@ def cli(ctx):
         'fan' : {'mode': 'off'},
         'ring': {'mode': 'off'},
         'save': False,
-        'restore': False
+        'restore': False,
+        'version': False,
     }
     pass
 
