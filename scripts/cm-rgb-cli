@@ -3,159 +3,181 @@
 from cm_rgb.ctrl import LedChannel, LedMode, CMRGBController
 import click
 
+
+import click
+
+class GroupWithCommandOptions(click.Group):
+    """ Allow application of options to group with multi command """
+
+    def add_command(self, cmd, name=None):
+        click.Group.add_command(self, cmd, name=name)
+
+        # add the group parameters to the command
+        for param in self.params:
+            cmd.params.append(param)
+
+        # hook the commands invoke with our own
+        cmd.invoke = self.build_command_invoke(cmd.invoke)
+        self.invoke_without_command = True
+
+    def build_command_invoke(self, original_invoke):
+
+        def command_invoke(ctx):
+            """ insert invocation of group function """
+
+            # separate the group parameters
+            ctx.obj = dict(_params=dict())
+            for param in self.params:
+                name = param.name
+                ctx.obj['_params'][name] = ctx.params[name]
+                del ctx.params[name]
+
+            # call the group function with its parameters
+            params = ctx.params
+            ctx.params = ctx.obj['_params']
+            self.invoke(ctx)
+            ctx.params = params
+
+            # now call the original invoke (the command)
+            original_invoke(ctx)
+
+        return command_invoke
+
 @click.group(chain=True)
 @click.pass_context
-def cli(ctx):
+def setup_group(ctx):
     ctx.obj = {
-        'logo': {'mode': 'off'},
-        'fan' : {'mode': 'off'},
-        'ring': {'mode': 'off'},
-        'save': False,
-        'restore': False,
-        'version': False,
+            'ctrl': CMRGBController(),
+            'lChannel': LedChannel.OFF,
+            'fChannel': LedChannel.OFF,
+            'rChannels': [LedChannel.OFF]*15,
+            'save': False
     }
     pass
 
-@cli.resultcallback()
+
+@setup_group.resultcallback()
 @click.pass_context
-def process_pipeline(ctx,processors):
-    c = CMRGBController()
+def setup_finish(ctx,processors):
+    c = ctx.obj['ctrl']
+    # Map LED's
+    c.assign_leds_to_channels(ctx.obj['lChannel'], ctx.obj['fChannel'], *ctx.obj['rChannels'])
 
-    if ctx.obj['restore']:
-        c.restore()
+    # Apply above
+    c.apply()
 
-    elif ctx.obj['version']:
-        print(c.getVersion())
-    else:
-        # LOGO handling
-        l = ctx.obj['logo']
-
-        lChannel = LedChannel.OFF
-
-        if l['mode'] != 'off':
-            c.set_channel(LedChannel.LOGO, LedMode[l['mode'].upper()], l['brightness'], l['color'][0], l['color'][1], l['color'][2], l['speed'])
-            lChannel = LedChannel.LOGO
+    if ctx.obj.get('save',False):
+        c.save()
 
 
-        # FAN handling
-        f = ctx.obj['fan']
-
-        fChannel = LedChannel.OFF
-
-        if f['mode'] != 'off':
-            c.set_channel(LedChannel.FAN, LedMode[f['mode'].upper()], f['brightness'], f['color'][0], f['color'][1], f['color'][2], f['speed'])
-            fChannel = LedChannel.FAN
-
-
-        # RING handling
-        r = ctx.obj['ring']
-
-        rChannels = [LedChannel.OFF]*15
-
-        if r['mode'] == 'static':
-            c.set_channel(LedChannel.R_STATIC, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
-            rChannels = [LedChannel.R_STATIC]*15
-
-        if r['mode'] == 'breathe':
-            c.set_channel(LedChannel.R_BREATHE, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
-            rChannels = [LedChannel.R_BREATHE]*15
-
-        if r['mode'] == 'swirl':
-            c.set_channel(LedChannel.R_SWIRL, LedMode.R_DEFAULT, r['brightness'], r['color'][0], r['color'][1], r['color'][2], r['speed'])
-            rChannels = [LedChannel.R_SWIRL]*15
-
-
-        # Map LED's
-        c.assign_leds_to_channels(lChannel, fChannel, *rChannels)
-
-        # Apply above
-        c.apply()
-
-        if ctx.obj['save']:
-            c.save()
-
-
-@cli.command('logo')
+@setup_group.command('logo')
 @click.option('--color','color', default='#00FFFF')
 @click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.pass_context
 def setup_logo(ctx, mode, color, brightness, speed):
-    l = {}
-
-    l['mode'] = mode
+    c = ctx.obj['ctrl']  
 
     color = color.lstrip('#')
-    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+    color = [int(color[i:i+2], 16) for i in (0, 2, 4)]
 
-    l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+    speed = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
 
-    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+    brightness = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
 
-    ctx.obj['logo'] = l
+    if mode != 'off':
+        c.set_channel(LedChannel.LOGO, LedMode[mode.upper()], brightness, color[0], color[1], color[2], speed)
+        ctx.obj['lChannel'] = LedChannel.LOGO
 
-@cli.command('fan')
+
+@setup_group.command('fan')
 @click.option('--color','color', default='#00FFFF')
 @click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.pass_context
 def setup_fan(ctx, mode, color, brightness, speed):
-    l = {}
-
-    l['mode'] = mode
+    c = ctx.obj['ctrl']  
 
     color = color.lstrip('#')
-    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+    color = [int(color[i:i+2], 16) for i in (0, 2, 4)]
 
-    l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+    speed = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
 
-    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+    brightness = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
 
-    ctx.obj['fan'] = l
+    if mode != 'off':
+        c.set_channel(LedChannel.FAN, LedMode[mode.upper()], brightness, color[0], color[1], color[2], speed)
+        ctx.obj['fChannel'] = LedChannel.FAN
 
 
-@cli.command('ring')
+@setup_group.command('ring')
 @click.option('--color','color', default='#00FFFF')
 @click.option('--mode', type=click.Choice(['off', 'static', 'breathe', 'swirl'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.pass_context
 def setup_ring(ctx, mode, color, brightness, speed):
-    l = {}
-
-    l['mode'] = mode
+    c = ctx.obj['ctrl']  
 
     color = color.lstrip('#')
-    l['color'] = [int(color[i:i+2], 16) for i in (0, 2, 4)]
-    l['brightness'] = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+    color = [int(color[i:i+2], 16) for i in (0, 2, 4)]
+
+    brightness = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
 
     if mode == 'swirl':
-        l['speed'] = [0x90,0x85,0x77,0x74,0x70][speed-1]
-    else:
-        l['speed'] = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+        speed = [0x90,0x85,0x77,0x74,0x70][speed-1]
+    else:    
+        speed = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
+
+    if mode == 'static':
+        c.set_channel(LedChannel.R_STATIC, LedMode.R_DEFAULT, brightness, color[0], color[1], color[2], speed)
+        ctx.obj['rChannels'] = [LedChannel.R_STATIC]*15
+
+    elif mode == 'breathe':
+        c.set_channel(LedChannel.R_BREATHE, LedMode.R_DEFAULT, brightness, color[0], color[1], color[2], speed)
+        ctx.obj['rChannels'] = [LedChannel.R_BREATHE]*15
+
+    elif mode == 'swirl':
+        c.set_channel(LedChannel.R_SWIRL, LedMode.R_DEFAULT, brightness, color[0], color[1], color[2], speed)
+        ctx.obj['rChannels'] = [LedChannel.R_SWIRL]*15
 
 
-    ctx.obj['ring'] = l
-
-
-@cli.command('save')
+@setup_group.command('save')
 @click.pass_context
 def save(ctx):
     ctx.obj['save'] = True
 
 
-@cli.command('restore')
+@click.group()
+@click.pass_context
+def main_group(ctx):
+    pass
+
+
+@main_group.command('restore')
 @click.pass_context
 def restore(ctx):
-    ctx.obj['restore'] = True
+    CMRGBController().restore()
 
 
-@cli.command('version')
+@main_group.command('version')
 @click.pass_context
 def version(ctx):
-    ctx.obj['version'] = True
+    print(CMRGBController().getVersion())
+
+
+@main_group.command('add-udev-rule')
+@click.pass_context
+def add_udev_rule(ctx):
+
+    import subprocess
+    returncode = subprocess.call(["/usr/bin/sudo", "/usr/bin/id"])
+    print(returncode)    
+
+
+main_group.add_command(setup_group,'set')
 
 if __name__ == '__main__':
-    cli()
+    main_group()
