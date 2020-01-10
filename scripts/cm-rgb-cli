@@ -141,7 +141,7 @@ def add_udev_rule(ctx):
     returncode = subprocess.call(["/usr/bin/sudo", "/usr/bin/sh", "-c", cmd])
     if returncode == 0:
         print("Created /etc/udev/rules.d/60-cm-rgb.rules")
-        print("udev should apply new rule automatically. If not, try running 'udevadm trigger'.")    
+        print("udev should apply new rule automatically. If not, try running 'sudo udevadm trigger'.")    
     else:
         print('Failed to create /etc/udev/rules.d/60-cm-rgb.rules')
 
