@@ -1,4 +1,4 @@
-## Control your Wraith Prism RGB without bloatware on Linux
+## Control your Wraith Prism RGB on Linux, Mac OS and Windows
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
 **cm-rgb-monitor** _showing realtime cpu utilization._
@@ -30,7 +30,14 @@ pip install cm-rgb
 Script must have access to USB device to function properly.
 It would be wise not to run this as root.
 
-NOTE: I’m running this as root.
+It's now possible to add udev rule by running:
+``` 
+cm-rgb-cli add-udev-rule
+```
+
+It may be required to reload udev for changes to take effect.
+Now you should be able to run ``cm-rgb-cli`` without sudo.
+
 
 ### Usage
 
@@ -41,13 +48,13 @@ cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF
 
 Example of CLI usage
 ```
-cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
+cm-rgb-cli set logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
 ```
 
 In order to make settings persistent append ``save``
 
 ```
-cm-rgb-cli logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 –brightness=1 save
+cm-rgb-cli set logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 –brightness=1 save
 ```
 
 You can also restore previously saved settings by running
@@ -57,12 +64,12 @@ cm-rgb-cli restore
 
 If LED lights disgust you, use this to turn them off.
 ```
-cm-rgb-cli logo --mode=off save
+cm-rgb-cli set logo --mode=off save
 ```
 
 Check help for details on each command
 ```
-cm-rgb-cli logo --help
+cm-rgb-cli set logo --help
 ```
 
 Much more flexibility is achievable by using the library directly instead of CLI.
