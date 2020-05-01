@@ -24,21 +24,25 @@ except ImportError as error:
 @click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
 @click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=3)
-@click.option("--show-temperature", "showTemperature", is_flag=True, help="Show CPU temperature as fan color")
-@click.option("--t-low", "tLow", type=float, default=45, help="Temperature considered low")
-@click.option("--t-high", "tHigh", type=float, default=85, help="Temperature considered high")
-@click.option("--t-low-color", "tLowColor", default="#00FF44", help="Color representing low temperature")
-@click.option("--t-high-color", "tHighColor", default="#FF0000", help="Color representing high temperature")
+@click.option("--show-sensor", "showSensor", is_flag=True, help="Show sensor value as fan color")
+@click.option("--low", "low", type=float, default=45, help="Temperature considered low")
+@click.option("--high", "high", type=float, default=85, help="Temperature considered high")
+@click.option("--low-color", "lowColor", default="#00FF44", help="Color representing low temperature")
+@click.option("--high-color", "highColor", default="#FF0000", help="Color representing high temperature")
+@click.option("--sensor-chip", "sensorChip", type=str, default="k10temp-pci-00c3", help="Temperature sensor name -> topmost row in each block of lm-snsors output")
+@click.option("--sensor-index", "sensorIndex", type=int, default=0, help="Sensor index - n-th row in lm-sensors output")
 def monitor(
         bgColor,
         cpuColor,
         brightness,
         interval,
-        showTemperature,
-        tLow,
-        tHigh,
-        tLowColor,
-        tHighColor
+        showSensor,
+        low,
+        high,
+        lowColor,
+        highColor,
+        sensorChip,
+        sensorIndex
         ):
     c = CMRGBController()
 
@@ -62,26 +66,26 @@ def monitor(
 
     atexit.register(exit_handler)
 
-    tHighColor = [int(tHighColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
-    tLowColor = [int(tLowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    lowColor = [int(lowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    highColor = [int(highColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
 
-    if showTemperature:
-        for chip in sensors.iter_detected_chips("k10temp-pci-00c3"):
-            result_p = sensors._get_features(ctypes.byref(chip), ctypes.byref(ctypes.c_int(0)))
+    if showSensor:
+        for chip in sensors.iter_detected_chips(sensorChip):
+            result_p = sensors._get_features(ctypes.byref(chip), ctypes.byref(ctypes.c_int(sensorIndex)))
             if not result_p:
                 break
             sensor = result_p.contents
             sensor.chip = chip
 
     while True:
-        if showTemperature:
+        if showSensor:
             # print(sensor.label, sensor.get_value())
             t = sensor.get_value()
-            interp_t = max(0, min(1, (t-tLow)/(tHigh-tLow)))
+            interp_t = max(0, min(1, (t-low)/(high-low)))
             color = [
                 int(
-                    interp_t * tHighColor[i]
-                    + (1 - interp_t)*tLowColor[i]
+                    interp_t * highColor[i]
+                    + (1 - interp_t)*lowColor[i]
                     )
                 for i in range(3)
                 ]

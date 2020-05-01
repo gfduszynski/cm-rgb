@@ -47,7 +47,7 @@ cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF
 ```
 The monitoring script can also display the CPU temperature using the fan color.
 ```
-cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF --show-temperature --t-low-color=#00FF00 --t-high-color=#FF0000
+cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF --show-sensor --low-color=#00FF00 --high-color=#FF0000
 ```
 
 Example of CLI usage
