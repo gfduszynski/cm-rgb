@@ -5,36 +5,89 @@ import atexit
 import time
 import click
 
+try:
+    import sensors
+    import ctypes
+    atexit.register(sensors.cleanup)
+    sensors.init()
+
+except ImportError as error:
+    print(error,
+          "\n\nCould not import sensors.\n" +
+          "Cannot show temperature as fan color.\n\n" +
+          "To fix this, run:\npip3 install pysensors"
+          )
+
+
 @click.command()
-@click.option("--bg-color",'bgColor', default='#00FFFF', help="Background LED's color")
-@click.option("--cpu-color",'cpuColor', default='#FFA500', help="Color of the cpu load LED's")
-@click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
-@click.option('--interval', type=click.IntRange(1, 60, clamp=True), default=3)
-def monitor(bgColor, cpuColor, brightness, interval):
+@click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
+@click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
+@click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=3)
+@click.option("--show-temperature", "showTemperature", is_flag=True, help="Show CPU temperature as fan color")
+@click.option("--t-low", "tLow", type=float, default=45, help="Temperature considered low")
+@click.option("--t-high", "tHigh", type=float, default=85, help="Temperature considered high")
+@click.option("--t-low-color", "tLowColor", default="#00FF44", help="Color representing low temperature")
+@click.option("--t-high-color", "tHighColor", default="#FF0000", help="Color representing high temperature")
+def monitor(
+        bgColor,
+        cpuColor,
+        brightness,
+        interval,
+        showTemperature,
+        tLow,
+        tHigh,
+        tLowColor,
+        tHighColor
+        ):
     c = CMRGBController()
 
     bgChannel = LedChannel.R_STATIC
     cpuChannel = LedChannel.R_SWIRL
 
-    b = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
+    b = [0x33, 0x66, 0x99, 0xCC, 0xFF][brightness-1]
 
     bgColor = bgColor.lstrip('#')
     col = [int(bgColor[i:i+2], 16) for i in (0, 2, 4)]
-    c.set_channel(bgChannel,  LedMode.R_DEFAULT, b, col[0], col[1], col[2])
+    c.set_channel(bgChannel, LedMode.R_DEFAULT, b, col[0], col[1], col[2])
 
     cpuColor = cpuColor.lstrip('#')
     col = [int(cpuColor[i:i+2], 16) for i in (0, 2, 4)]
     c.set_channel(cpuChannel, LedMode.R_DEFAULT, b, col[0], col[1], col[2], 0x60)
-    
-    c.apply()
 
+    c.apply()
 
     def exit_handler():
         c.restore()
 
     atexit.register(exit_handler)
 
+    tHighColor = [int(tHighColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    tLowColor = [int(tLowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+
+    if showTemperature:
+        for chip in sensors.iter_detected_chips("k10temp-pci-00c3"):
+            result_p = sensors._get_features(ctypes.byref(chip), ctypes.byref(ctypes.c_int(0)))
+            if not result_p:
+                break
+            sensor = result_p.contents
+            sensor.chip = chip
+
     while True:
+        if showTemperature:
+            # print(sensor.label, sensor.get_value())
+            t = sensor.get_value()
+            interp_t = max(0, min(1, (t-tLow)/(tHigh-tLow)))
+            color = [
+                int(
+                    interp_t * tHighColor[i]
+                    + (1 - interp_t)*tLowColor[i]
+                    )
+                for i in range(3)
+                ]
+            # print(color)
+            c.set_channel(LedChannel.FAN, LedMode.STATIC, b, color[0], color[1], color[2])
+
         # gives a single float value
         cpu = psutil.cpu_percent()
         cpu_leds = int(round(cpu*15 / 100))
@@ -49,7 +102,6 @@ def monitor(bgColor, cpuColor, brightness, interval):
 
         c.assign_leds_to_channels(LedChannel.LOGO, LedChannel.FAN, *ring_leds)
         c.apply()
-
 
         time.sleep(interval)
 
