@@ -29,7 +29,7 @@ except ImportError as error:
 @click.option("--high", "high", type=float, default=85, help="Temperature considered high")
 @click.option("--low-color", "lowColor", default="#00FF44", help="Color representing low temperature")
 @click.option("--high-color", "highColor", default="#FF0000", help="Color representing high temperature")
-@click.option("--sensor-chip", "sensorChip", type=str, default="k10temp-pci-00c3", help="Temperature sensor name -> topmost row in each block of lm-snsors output")
+@click.option("--sensor-chip", "sensorChip", type=str, default="k10temp-pci-00c3", help="Sensor name -> topmost row in each block of lm-sensors output (e.g. \"k10temp-pci-00c3\"")
 @click.option("--sensor-index", "sensorIndex", type=int, default=0, help="Sensor index - n-th row in lm-sensors output")
 def monitor(
         bgColor,
