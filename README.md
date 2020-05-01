@@ -49,6 +49,8 @@ The monitoring script can also display the CPU temperature using the fan color.
 ```
 cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF --show-temperature --t-low-color=#00FF00 --t-high-color=#FF0000
 ```
+Requires _lm-sensor_ installed and configured and a python wrapper for it called _pysensors_.
+
 
 Example of CLI usage
 ```
