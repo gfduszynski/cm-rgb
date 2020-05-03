@@ -45,7 +45,7 @@ def print_available_sources(ctx,value):
 @click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
 @click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
 @click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
-@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=3)
+@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.2)
 
 @click.option("--show-temp", "showSensor", is_flag=True, help="Show temperature of selected sensor on cpu fan")
 @click.option("--temp-source", "tempSource", type=str, default="k10temp-pci-00c3/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp-pci-00c3/Tdie\")")
