@@ -5,8 +5,10 @@ from enum import Enum
 class LedChannel(Enum):
     R_STATIC = 0x00
     R_BREATHE = 0x01
+    R_CYCLE = 0x02
     LOGO = 0x05
     FAN = 0x06
+    R_RAINBOW = 0x07
     R_SWIRL = 0x0A
     OFF = 0xFE
 
@@ -16,6 +18,7 @@ class LedMode(Enum):
     STATIC = 0x01
     CYCLE = 0x02
     BREATHE = 0x03
+    R_RAINBOW = 0x05
     R_SWIRL = 0x4a
     R_DEFAULT = 0xFF
 
