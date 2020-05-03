@@ -77,7 +77,7 @@ def setup_fan(ctx, mode, color, brightness, speed):
 
 @setup_group.command('ring')
 @click.option('--color','color', default='#00FFFF')
-@click.option('--mode', type=click.Choice(['off', 'static', 'breathe', 'swirl','rainbow'], case_sensitive=False), default='static')
+@click.option('--mode', type=click.Choice(['off', 'static', 'breathe', 'swirl','rainbow','cycle'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.pass_context
@@ -88,8 +88,10 @@ def setup_ring(ctx, mode, color, brightness, speed):
     color = [int(color[i:i+2], 16) for i in (0, 2, 4)]
 
     
-
-    if mode == 'rainbow':
+    if mode == 'cycle':
+        speed = [0x72,0x68,0x64,0x62,0x61][speed-1]
+        brightness = [0x10,0x20,0x40,0x60,0x7F][brightness-1]
+    elif mode == 'rainbow':
         speed = [0x72,0x68,0x64,0x62,0x61][speed-1]
         brightness = [0x16,0x33,0x66,0x88,0xFF][brightness-1]
     elif mode == 'swirl':
@@ -99,8 +101,11 @@ def setup_ring(ctx, mode, color, brightness, speed):
         speed = [0x3C,0x34,0x2c,0x20,0x18][speed-1]
         brightness = [0x33,0x66,0x99,0xCC,0xFF][brightness-1]
 
+    if mode == 'cycle':
+        c.set_channel(LedChannel.R_CYCLE, LedMode.CYCLE, brightness, color[0], color[1], color[2], speed)
+        ctx.obj['rChannels'] = [LedChannel.R_CYCLE]*15
 
-    if mode == 'rainbow':
+    elif mode == 'rainbow':
         c.set_channel(LedChannel.R_RAINBOW, LedMode.R_RAINBOW, brightness, color[0], color[1], color[2], speed)
         ctx.obj['rChannels'] = [LedChannel.R_RAINBOW]*15
 
