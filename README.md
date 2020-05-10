@@ -11,41 +11,10 @@
 **cm-rgb-monitor** _showing realtime cpu utilization._
 
 
-### Installation
+## Getting started
+### Installation & Configuration
 
-Make sure you have dev libraries for hidapi.
-
-##### Ubuntu
-```
-sudo apt-get install python-dev libusb-1.0-0-dev libudev-dev
-```
-
-##### Other distros
-It's possible you already have what it takes to install pip package so try that.
-If you have any problems regarding hidapi installation see: `` https://github.com/trezor/cython-hidapi ``
-Your issue may already have a solution there.
-
-If you still have a problem please create an issue :)
-
-##### Finally
-Now you can install pip package.
-```
-pip install cm-rgb
-```
-
-### Configuration
-
-Script must have access to USB device to function properly.
-It would be wise not to run this as root.
-
-It's now possible to add udev rule by running:
-``` 
-cm-rgb-cli add-udev-rule
-```
-
-It may be required to reload udev for changes to take effect.
-Now you should be able to run ``cm-rgb-cli`` without sudo.
-
+Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wiki/Installation-&-Configuration)
 
 ### Usage
 
