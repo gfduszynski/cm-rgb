@@ -1,7 +1,15 @@
-## Control your Wraith Prism RGB on Linux, Mac OS and Windows
+# cm-rgb
+[![Licence](https://img.shields.io/github/license/gfduszynski/cm-rgb?color=blue&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
+[![Downloads](https://img.shields.io/pypi/dm/cm-rgb?&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
+[![PayPal](https://img.shields.io/badge/PayPal-3$-1abc9c.svg?style=for-the-badge)](https://www.paypal.me/gfduszynski/3USD)
+
+
+### Control your Wraith Prism RGB on Linux, Mac OS and Windows
+
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
 **cm-rgb-monitor** _showing realtime cpu utilization._
+
 
 ### Installation
 
@@ -87,8 +95,4 @@ All of the 15 LED’s on the ring are available to mess with.
 
 See LICENCE file for details
 
-### Donations
-If this works for you and you like it feel free to buy me a beer :)
-
-[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/gfduszynski/)
 
