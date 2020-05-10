@@ -57,7 +57,7 @@ class CMRGBController:
         device_list = [x for x in hid.enumerate(self.VENDOR_ID, self.PRODUCT_ID)
                        if x['interface_number'] == self.IFACE_NUM]
         if len(device_list) == 0:
-            raise Exception("No devices found")
+            raise Exception("No devices found. See: https://github.com/gfduszynski/cm-rgb/issues/9")
 
         self.device = hid.device()
         self.device.open_path(device_list[0]["path"])
