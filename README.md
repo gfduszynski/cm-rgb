@@ -21,12 +21,10 @@ Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wi
 
 Package comes with two scripts ``cm-rgb-cli`` and ``cm-rgb-monitor``.  
 
-#### CLI
 ``cm-rgb-cli`` allows for fine grained control of each individual zone including [turing off the LED's](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage#3-turning-all-zones-off) completely.
 
 Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage).
 
-#### Monitor
 ``cm-rgb-monitor`` allows for displaying cpu utilization with ring LED's, along with temperature.
 
 Combining the cli + monitor can create neat transition from powering your system right to booting your OS.
