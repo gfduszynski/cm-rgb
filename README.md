@@ -15,7 +15,7 @@
 ## Getting started
 ### Installation & Configuration
 
-Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wiki/Installation-&-Configuration)
+Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wiki/1.-Installation-&-Configuration)
 
 ### Usage
 
