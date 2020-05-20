@@ -25,7 +25,7 @@ Package comes with two scripts ``cm-rgb-cli`` and ``cm-rgb-monitor``.
 
 Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage).
 
-``cm-rgb-monitor`` allows for displaying cpu utilization with ring LED's, along with temperature (Thanks to [mpsdskd](https://github.com/gfduszynski/cm-rgb/issues?q=is%3Apr+author%3Ampsdskd)).
+``cm-rgb-monitor`` allows for displaying cpu utilization with ring LED's, along with temperature (thanks to [mpsdskd](https://github.com/mpsdskd)).
 
 Combining the cli + monitor can create neat transition from powering your system right to booting your OS.
 
