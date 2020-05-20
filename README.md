@@ -22,7 +22,8 @@ Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wi
 Package comes with two scripts ``cm-rgb-cli`` and ``cm-rgb-monitor``.  
 
 #### CLI
-``cm-rgb-cli allows`` for fine grained control of each individual zone including [turing off the LED's](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage#3-turning-all-zones-off) completely.  
+``cm-rgb-cli`` allows for fine grained control of each individual zone including [turing off the LED's](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage#3-turning-all-zones-off) completely.
+
 Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage).
 
 #### Monitor
@@ -32,7 +33,7 @@ Combining the cli + monitor can create neat transition from powering your system
 
 Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/3.-Monitor-usage).
 
-### Licence
+## Licence
 
 **MIT** 
 
