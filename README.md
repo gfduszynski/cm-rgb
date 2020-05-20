@@ -19,50 +19,21 @@ Follow [this simple guide on our wiki.](https://github.com/gfduszynski/cm-rgb/wi
 
 ### Usage
 
-Included there is a sample script that allows for displaying cpu utilization with ring LED's.
-```
-cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF
-```
-The monitoring script can also display sensor values (e.g. CPU temperature) using the fan color.
-```
-cm-rgb-monitor --cpu-color=#FFA500 --bg-color=#00FFFF --show-temp --low-color=#00FF00 --high-color=#FF0000
-```
-Requires _lm-sensor_ installed and configured and a python wrapper for it called _pysensors_.
+Package comes with two scripts ``cm-rgb-cli`` and ``cm-rgb-monitor``.  
 
+#### CLI
+``cm-rgb-cli allows`` for fine grained control of each individual zone including [turing off the LED's](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage#3-turning-all-zones-off) completely.  
+Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage).
 
-Example of CLI usage
-```
-cm-rgb-cli set logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 --brightness=1
-```
+#### Monitor
+``cm-rgb-monitor`` allows for displaying cpu utilization with ring LED's, along with temperature.
 
-In order to make settings persistent append ``save``
+Combining the cli + monitor can create neat transition from powering your system right to booting your OS.
 
-```
-cm-rgb-cli set logo --mode=breathe --color=#00ff00 --speed=3 --brightness=5 fan --mode=breathe --color=#0000ff --speed=4 --brightness=1 ring --mode=swirl --color=#ff0000 --speed=1 –brightness=1 save
-```
-
-You can also restore previously saved settings by running
-```
-cm-rgb-cli restore
-```
-
-If LED lights disgust you, use this to turn them off.
-```
-cm-rgb-cli set logo --mode=off save
-```
-
-Check help for details on each command
-```
-cm-rgb-cli set logo --help
-```
-
-Much more flexibility is achievable by using the library directly instead of CLI.
-All of the 15 LED’s on the ring are available to mess with.
+Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/3.-Monitor-usage).
 
 ### Licence
 
 **MIT** 
 
 See LICENCE file for details
-
-
