@@ -31,6 +31,8 @@ except ImportError as error:
 @click.option("--high-color", "highColor", default="#FF0000", help="Color representing high temperature")
 @click.option("--sensor-chip", "sensorChip", type=str, default="k10temp-pci-00c3", help="Sensor name -> topmost row in each block of lm-sensors output (e.g. \"k10temp-pci-00c3\")")
 @click.option("--sensor-index", "sensorIndex", type=int, default=0, help="Sensor index - n-th row in lm-sensors output")
+@click.option("--num-cores", "numCores", type=int, default=16, help="Number of logical CPU cores")
+@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True)
 def monitor(
         bgColor,
         cpuColor,
@@ -42,7 +44,9 @@ def monitor(
         lowColor,
         highColor,
         sensorChip,
-        sensorIndex
+        sensorIndex,
+        numCores,
+        showCPUFreq,
         ):
     c = CMRGBController()
 
@@ -76,6 +80,9 @@ def monitor(
                 break
             sensor = result_p.contents
             sensor.chip = chip
+    
+    if showCPUFreq:
+        freqs = numCores*[0]
 
     while True:
         if showSensor:
@@ -91,6 +98,23 @@ def monitor(
                 ]
             # print(color)
             c.set_channel(LedChannel.FAN, LedMode.STATIC, b, color[0], color[1], color[2])
+            
+        if showCPUFreq:
+            for i in range(numCores):
+                with open(f"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq", "r") as f:
+                    freqs[i] = int(f.read())
+            # print(freqs)
+            interp_f = max(0, min(1, (max(freqs)-2200000)/(4000000-2200000)))            
+            color = [
+                int(
+                    interp_f * highColor[i]
+                    + (1 - interp_f)*lowColor[i]
+                    )
+                for i in range(3)
+                ]
+            # print(color)
+            c.set_channel(LedChannel.LOGO, LedMode.STATIC, b, color[0], color[1], color[2])
+            
 
         # gives a single float value
         cpu = psutil.cpu_percent()
