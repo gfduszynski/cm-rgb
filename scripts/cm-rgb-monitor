@@ -62,6 +62,7 @@ def print_available_sources(ctx,value):
 
 @click.option("--num-cores", "numCores", type=int, default=16, help="Number of logical CPU cores")
 @click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True)
+
 def monitor(
         bgColor,
         cpuColor,
@@ -72,8 +73,8 @@ def monitor(
         high,
         lowColor,
         highColor,
-        sensorChip,
-        sensorIndex,
+        tempSource,
+        printValues,
         numCores,
         showCPUFreq,
         ):
