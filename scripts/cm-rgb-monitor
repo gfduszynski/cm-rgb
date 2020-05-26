@@ -25,16 +25,16 @@ def print_available_sources(ctx,value):
 @click.option("--verbose", "verbose", is_flag=True, help="Print cpu load and sensor readout")
 
 @click.option("--show-temp", "showSensor", is_flag=True, help="Show temperature of selected sensor on cpu fan")
-@click.option("--temp-source", "tempSource", type=str, default="k10temp/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp-pci-00c3/Tdie\")")
+@click.option("--temp-source", "tempSource", type=str, default="k10temp/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp/Tdie\")")
 @click.option("--temp-low", "low", type=float, default=45, help="Temperature considered low")
 @click.option("--temp-high", "high", type=float, default=85, help="Temperature considered high")
 @click.option("--temp-low-color", "tLowColor", default="#00FFFF", help="Color representing low temperature")
 @click.option("--temp-high-color", "tHighColor", default="#FFA500", help="Color representing high temperature")
 
-@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True)
-@click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low temperature")
-@click.option("--freq-high-color", "fHighColor", default="#FFA500", help="Color representing high temperature")
-@click.option("--freq-color-smoothing", "fSmoothing", type=click.FloatRange(0, 1, clamp=True), default=0.8)
+@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True, help="Show CPU frequency on logo")
+@click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low frequency")
+@click.option("--freq-high-color", "fHighColor", default="#FFA500", help="Color representing high frequency")
+@click.option("--freq-color-smoothing", "fSmoothing", type=click.FloatRange(0, 1, clamp=True), default=0.8, help="Smoothing of frequency value to make color less jumpy. 0 -> no smoothing, 0.9 -> a lot")
 
 @click.option('--list-temp-sources', is_flag=True, callback=print_available_sources, expose_value=False, is_eager=True)
 
@@ -85,12 +85,16 @@ def monitor(
     
     smoothed_freq = 3000
     
-    sensorGroup, sensorLabel = tempSource.split("/")
-    if verbose:
-        print(sensorGroup, sensorLabel)
-    for i, sensor in enumerate(psutil.sensors_temperatures()[sensorGroup]):
-        if sensor.label == sensorLabel:
-            sensorIndex = i
+    try:
+        sensorGroup, sensorLabel = tempSource.split("/")
+        if verbose:
+            print(sensorGroup, sensorLabel)
+        for i, sensor in enumerate(psutil.sensors_temperatures()[sensorGroup]):
+            if sensor.label == sensorLabel:
+                sensorIndex = i
+    except:
+        print("Temp source not found, try running with --list-temp-sources")
+        showSensor = False
 
     while True:
         if showSensor:
