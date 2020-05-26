@@ -5,39 +5,14 @@ import atexit
 import time
 import click
 
-# Try to load optional dependency - sensors
-sensorsImported = True
-sensorsImportError = ""
-
-try:
-    import sensors
-    atexit.register(sensors.cleanup)
-    sensors.init()
-
-except ImportError as error:
-    sensorsImported = False
-    sensorsImportError = error
-
-
-def verify_sensors_import():
-    # Make sure optional dependency is available for showSensor
-    if not sensorsImported:
-        print(sensorsImportError,
-          "\n\nCould not import sensors.\n" +
-          "Cannot show temperature as fan color.\n\n" +
-          "To fix this, run:\npip3 install pysensors"
-          )
-        exit(-1)
-
 def print_available_sources(ctx,value):
     if value:
-        verify_sensors_import()
-
         print("Available sensors:")
-        for chip in sensors.iter_detected_chips():
+        sensorDict = psutil.sensors_temperatures()
+        for chipname, chip in sensorDict.items():
             for feature in chip:
-                print(str(chip)+"/"+feature.label," -> ",feature.get_value())
-
+                print(chipname + "/" + feature.label," -> ", feature.current)
+    
         ctx.exit()
 
 
@@ -45,23 +20,23 @@ def print_available_sources(ctx,value):
 @click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
 @click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
 @click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
-@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.2)
+@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.1)
+
+@click.option("--verbose", "verbose", is_flag=True, help="Print cpu load and sensor readout")
 
 @click.option("--show-temp", "showSensor", is_flag=True, help="Show temperature of selected sensor on cpu fan")
-@click.option("--temp-source", "tempSource", type=str, default="k10temp-pci-00c3/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp-pci-00c3/Tdie\")")
-
+@click.option("--temp-source", "tempSource", type=str, default="k10temp/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp-pci-00c3/Tdie\")")
 @click.option("--temp-low", "low", type=float, default=45, help="Temperature considered low")
 @click.option("--temp-high", "high", type=float, default=85, help="Temperature considered high")
+@click.option("--temp-low-color", "tLowColor", default="#00FFFF", help="Color representing low temperature")
+@click.option("--temp-high-color", "tHighColor", default="#FFA500", help="Color representing high temperature")
 
-@click.option("--temp-low-color", "lowColor", default="#00FFFF", help="Color representing low temperature")
-@click.option("--temp-high-color", "highColor", default="#FFA500", help="Color representing high temperature")
-
-@click.option("--print-values", "printValues", is_flag=True, help="Print cpu load and sensor readout")
+@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True)
+@click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low temperature")
+@click.option("--freq-high-color", "fHighColor", default="#FFA500", help="Color representing high temperature")
+@click.option("--freq-color-smoothing", "fSmoothing", type=click.FloatRange(0, 1, clamp=True), default=0.8)
 
 @click.option('--list-temp-sources', is_flag=True, callback=print_available_sources, expose_value=False, is_eager=True)
-
-@click.option("--num-cores", "numCores", type=int, default=16, help="Number of logical CPU cores")
-@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True)
 
 def monitor(
         bgColor,
@@ -71,12 +46,14 @@ def monitor(
         showSensor,
         low,
         high,
-        lowColor,
-        highColor,
+        tLowColor,
+        tHighColor,
         tempSource,
-        printValues,
-        numCores,
+        verbose,
         showCPUFreq,
+        fLowColor,
+        fHighColor,
+        fSmoothing
         ):
     c = CMRGBController()
 
@@ -100,63 +77,47 @@ def monitor(
 
     atexit.register(exit_handler)
 
-    lowColor = [int(lowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
-    highColor = [int(highColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
-
-    if showSensor:
-        verify_sensors_import()
-        sensor = False
-
-        tmp = tempSource.split('/')
-        if len(tmp) == 2:
-            sensorChip = tmp[0]
-            sensorFeature = tmp[1]
-
-            for chip in sensors.iter_detected_chips(sensorChip):
-                
-                fGen = (f for f in chip if (f.label == sensorFeature))
-                for feature in fGen:
-                    sensor = feature
-        else:
-            print("Invalid temp source syntax. Must match <chip>/<feature>")
-            exit(-1)
-
-        if not sensor:
-            print("Temp source not found, try running with --list-temp-sources")
-            exit(-1)
+    tLowColor = [int(tLowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    tHighColor = [int(tHighColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
     
-    if showCPUFreq:
-        freqs = numCores*[0]
+    fLowColor = [int(fLowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    fHighColor = [int(fHighColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    
+    smoothed_freq = 3000
+    
+    sensorGroup, sensorLabel = tempSource.split("/")
+    if verbose:
+        print(sensorGroup, sensorLabel)
+    for i, sensor in enumerate(psutil.sensors_temperatures()[sensorGroup]):
+        if sensor.label == sensorLabel:
+            sensorIndex = i
 
     while True:
         if showSensor:
-            # print(sensor.label, sensor.get_value())
-            t = sensor.get_value()
+            t = psutil.sensors_temperatures()[sensorGroup][sensorIndex].current
             interp_t = max(0, min(1, (t-low)/(high-low)))
             color = [
-                int(
-                    interp_t * highColor[i]
-                    + (1 - interp_t)*lowColor[i]
-                    )
+                int(interp_t * tHighColor[i] + (1 - interp_t)*tLowColor[i])
                 for i in range(3)
                 ]
-            # print(color)
+            if verbose:
+                print("Temperature:", t)
+                print("Temperature color:", color)
             c.set_channel(LedChannel.FAN, LedMode.STATIC, b, color[0], color[1], color[2])
             
         if showCPUFreq:
-            for i in range(numCores):
-                with open(f"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq", "r") as f:
-                    freqs[i] = int(f.read())
-            # print(freqs)
-            interp_f = max(0, min(1, (max(freqs)-2200000)/(4000000-2200000)))            
+            freqs = psutil.cpu_freq(percpu=True)
+            max_freq = max(i.current for i in freqs)
+            smoothed_freq = fSmoothing * smoothed_freq + (1 - fSmoothing) * max_freq
+            interp_f = max(0, min(1, (smoothed_freq-2200)/(3700-2200)))            
             color = [
-                int(
-                    interp_f * highColor[i]
-                    + (1 - interp_f)*lowColor[i]
-                    )
+                int(interp_f * fHighColor[i] + (1 - interp_f)*fLowColor[i])
                 for i in range(3)
                 ]
-            # print(color)
+            if verbose:
+                print("Current Freq: ", max_freq)
+                print("Smoothed Freq:", smoothed_freq)
+                print("Frequency Color:", color)
             c.set_channel(LedChannel.LOGO, LedMode.STATIC, b, color[0], color[1], color[2])
             
 
