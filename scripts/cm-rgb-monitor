@@ -12,15 +12,6 @@ def print_available_sources(ctx,value):
         for chipname, chip in sensorDict.items():
             for feature in chip:
                 print(chipname + "/" + feature.label," -> ", feature.current)
- 
-def print_available_sources(ctx,value):
-    if value:
-        verify_sensors_import()
-
-        print("Available sensors:")
-        for chip in sensors.iter_detected_chips():
-            for feature in chip:
-                print(str(chip)+"/"+feature.label," -> ",feature.get_value())
 
         ctx.exit()
 
