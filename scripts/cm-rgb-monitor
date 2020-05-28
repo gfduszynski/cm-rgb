@@ -12,7 +12,16 @@ def print_available_sources(ctx,value):
         for chipname, chip in sensorDict.items():
             for feature in chip:
                 print(chipname + "/" + feature.label," -> ", feature.current)
-    
+ 
+def print_available_sources(ctx,value):
+    if value:
+        verify_sensors_import()
+
+        print("Available sensors:")
+        for chip in sensors.iter_detected_chips():
+            for feature in chip:
+                print(str(chip)+"/"+feature.label," -> ",feature.get_value())
+
         ctx.exit()
 
 
@@ -76,6 +85,7 @@ def monitor(
         c.restore()
 
     atexit.register(exit_handler)
+
 
     tLowColor = [int(tLowColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
     tHighColor = [int(tHighColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]

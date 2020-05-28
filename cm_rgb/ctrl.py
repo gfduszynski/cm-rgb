@@ -5,8 +5,10 @@ from enum import Enum
 class LedChannel(Enum):
     R_STATIC = 0x00
     R_BREATHE = 0x01
+    R_CYCLE = 0x02
     LOGO = 0x05
     FAN = 0x06
+    R_RAINBOW = 0x07
     R_SWIRL = 0x0A
     OFF = 0xFE
 
@@ -16,6 +18,7 @@ class LedMode(Enum):
     STATIC = 0x01
     CYCLE = 0x02
     BREATHE = 0x03
+    R_RAINBOW = 0x05
     R_SWIRL = 0x4a
     R_DEFAULT = 0xFF
 
@@ -54,7 +57,7 @@ class CMRGBController:
         device_list = [x for x in hid.enumerate(self.VENDOR_ID, self.PRODUCT_ID)
                        if x['interface_number'] == self.IFACE_NUM]
         if len(device_list) == 0:
-            raise Exception("No devices found")
+            raise Exception("No devices found. See: https://github.com/gfduszynski/cm-rgb/issues/9")
 
         self.device = hid.device()
         self.device.open_path(device_list[0]["path"])
