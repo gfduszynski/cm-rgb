@@ -5,6 +5,12 @@ import atexit
 import time
 import click
 
+import os
+if os.name == "nt":
+    windows = True 
+else:
+    windows = False
+
 def print_available_sources(ctx,value):
     if value:
         print("Available sensors:")
@@ -14,7 +20,10 @@ def print_available_sources(ctx,value):
                 print(chipname + "/" + feature.label," -> ", feature.current)
 
         ctx.exit()
-
+        
+def get_temperature_windows():
+    raise NotImplementedError
+    return temperature
 
 @click.command()
 @click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
@@ -86,20 +95,25 @@ def monitor(
     
     smoothed_freq = 3000
     
-    try:
-        sensorGroup, sensorLabel = tempSource.split("/")
-        if verbose:
-            print(sensorGroup, sensorLabel)
-        for i, sensor in enumerate(psutil.sensors_temperatures()[sensorGroup]):
-            if sensor.label == sensorLabel:
-                sensorIndex = i
-    except:
-        print("Temp source not found, try running with --list-temp-sources")
-        showSensor = False
+    if showSensor:
+        if not windows:
+            try:
+                sensorGroup, sensorLabel = tempSource.split("/")
+                if verbose:
+                    print(sensorGroup, sensorLabel)
+                for i, sensor in enumerate(psutil.sensors_temperatures()[sensorGroup]):
+                    if sensor.label == sensorLabel:
+                        sensorIndex = i
+            except:
+                print("Temp source not found, try running with --list-temp-sources")
+                showSensor = False
 
     while True:
         if showSensor:
-            t = psutil.sensors_temperatures()[sensorGroup][sensorIndex].current
+            if windows:
+                t = get_temperature_windows()
+            else:
+                t = psutil.sensors_temperatures()[sensorGroup][sensorIndex].current
             interp_t = max(0, min(1, (t-low)/(high-low)))
             color = [
                 int(interp_t * tHighColor[i] + (1 - interp_t)*tLowColor[i])
