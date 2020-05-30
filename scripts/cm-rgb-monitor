@@ -20,7 +20,7 @@ def print_available_sources(ctx,value):
 @click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
 @click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
 @click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
-@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.1)
+@click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.2)
 
 @click.option("--verbose", "verbose", is_flag=True, help="Print cpu load and sensor readout")
 
@@ -31,7 +31,7 @@ def print_available_sources(ctx,value):
 @click.option("--temp-low-color", "tLowColor", default="#00FFFF", help="Color representing low temperature")
 @click.option("--temp-high-color", "tHighColor", default="#FFA500", help="Color representing high temperature")
 
-@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=True, help="Show CPU frequency on logo")
+@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=False, help="Show CPU frequency on logo")
 @click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low frequency")
 @click.option("--freq-high-color", "fHighColor", default="#FFA500", help="Color representing high frequency")
 @click.option("--freq-color-smoothing", "fSmoothing", type=click.FloatRange(0, 1, clamp=True), default=0.8, help="Smoothing of frequency value to make color less jumpy. 0 -> no smoothing, 0.9 -> a lot")
@@ -56,6 +56,8 @@ def monitor(
         fSmoothing
         ):
     c = CMRGBController()
+
+    c.disableMirage()
 
     bgChannel = LedChannel.R_STATIC
     cpuChannel = LedChannel.R_SWIRL
