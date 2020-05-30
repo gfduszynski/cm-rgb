@@ -31,7 +31,7 @@ def print_available_sources(ctx,value):
 @click.option("--temp-low-color", "tLowColor", default="#00FFFF", help="Color representing low temperature")
 @click.option("--temp-high-color", "tHighColor", default="#FFA500", help="Color representing high temperature")
 
-@click.option("--show-cpu-frequency", "showCPUFreq", type=bool, default=False, help="Show CPU frequency on logo")
+@click.option("--show-cpu-frequency", "showCPUFreq", is_flag=True, help="Show CPU frequency on logo")
 @click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low frequency")
 @click.option("--freq-high-color", "fHighColor", default="#FFA500", help="Color representing high frequency")
 @click.option("--freq-color-smoothing", "fSmoothing", type=click.FloatRange(0, 1, clamp=True), default=0.8, help="Smoothing of frequency value to make color less jumpy. 0 -> no smoothing, 0.9 -> a lot")
