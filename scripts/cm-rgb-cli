@@ -14,6 +14,7 @@ def setup_group(ctx):
             'lChannel': LedChannel.OFF,
             'fChannel': LedChannel.OFF,
             'rChannels': [LedChannel.OFF]*15,
+            'mirage': [0,0,0],
             'save': False
     }
     pass
@@ -23,6 +24,10 @@ def setup_group(ctx):
 @click.pass_context
 def setup_finish(ctx,processors):
     c = ctx.obj['ctrl']
+
+    # Configure mirage
+    c.enableMirage(*ctx.obj['mirage'])
+
     # Map LED's
     c.assign_leds_to_channels(ctx.obj['lChannel'], ctx.obj['fChannel'], *ctx.obj['rChannels'])
 
@@ -59,8 +64,11 @@ def setup_logo(ctx, mode, color, brightness, speed):
 @click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option('--mirage-red-freq',   type=click.IntRange(3, 32768, clamp=True), default=0)
+@click.option('--mirage-green-freq', type=click.IntRange(3, 32768, clamp=True), default=0)
+@click.option('--mirage-blue-freq',  type=click.IntRange(3, 32768, clamp=True), default=0)
 @click.pass_context
-def setup_fan(ctx, mode, color, brightness, speed):
+def setup_fan(ctx, mode, color, brightness, speed, mirage_red_freq, mirage_green_freq, mirage_blue_freq):
     c = ctx.obj['ctrl']  
 
     color = color.lstrip('#')
@@ -73,6 +81,7 @@ def setup_fan(ctx, mode, color, brightness, speed):
     if mode != 'off':
         c.set_channel(LedChannel.FAN, LedMode[mode.upper()], brightness, color[0], color[1], color[2], speed)
         ctx.obj['fChannel'] = LedChannel.FAN
+        ctx.obj['mirage'] = [mirage_red_freq, mirage_green_freq, mirage_blue_freq]
 
 
 @setup_group.command('ring')

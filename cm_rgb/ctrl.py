@@ -1,4 +1,5 @@
 import hid
+import math
 from enum import Enum
 
 
@@ -70,10 +71,7 @@ class CMRGBController:
         self.send_packet(self.P_MAGIC_2)
 
         # Some sort of apply / flush op
-        self.apply()
-
-        # Mirage is currently unsupported and just in case it's active, let's disable it
-        self.send_packet(self.P_MIRAGE_OFF)
+        self.apply()        
 
     def send_packet(self, packet):
         self.device.write(packet)
@@ -90,6 +88,29 @@ class CMRGBController:
         self.send_packet(self.P_POWER_OFF)
         self.send_packet(self.P_RESTORE)
         self.apply()
+
+    def disableMirage(self):
+        self.send_packet(self.enableMirage(0,0,0))
+
+    def enableMirage(self, rHz, gHz, bHz):
+        def hzToBytes(hz):
+            if hz == 0:
+                return [0x00, 0xFF, 0x4A]
+            v = 187498.0 / hz
+            vMul = math.floor(v/256.0)
+            vRem = v / (vMul + 1)
+            return [min(vMul,255), math.floor(vRem % 1 * 256), math.floor(vRem)]
+
+        rBytes = hzToBytes(rHz)
+        gBytes = hzToBytes(gHz)
+        bBytes = hzToBytes(bHz)
+
+        pkt = self.new_packet(0, 0x51, 0x71, 0x00, 0x00, 
+        0x01, 0x00, 0xFF, 0x4A, # This part is probably for white LED's that did not found their way into final cooler
+        0x02, rBytes[0], rBytes[1], rBytes[2], 
+        0x03, gBytes[0], gBytes[1], gBytes[2],  
+        0x04, bBytes[0], bBytes[1], bBytes[2])
+        return self.send_packet(pkt)
 
     def getVersion(self):
         reply = self.send_packet(self.P_GET_VER)
