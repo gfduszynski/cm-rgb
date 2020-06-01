@@ -54,7 +54,7 @@ def get_temperature_windows():
 
 @click.option("--mirage", "mirage", is_flag=True, help="Mirage effect depending on fan speed")
 @click.option("--mirage-fan", "mirageFan", type=str, default="nct6797/1", help="Fan speed source <chip>/<index> (eg. \"nct6797/1\")")
-@click.option("--mirage-factors", "mirageFactors", type=str, default="3.53,3.53,3.53", help="Fan speed source <chip>/<index> (eg. \"nct6797/1\")")
+@click.option("--mirage-factors", "mirageFactors", type=str, default="7.0,7.0,7.0", help="Fan speed to mirage frequency factor(s) - try some!")
 
 @click.option('--list-temp-sources', is_flag=True, callback=print_available_sources, expose_value=False, is_eager=True)
 
