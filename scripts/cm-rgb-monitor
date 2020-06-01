@@ -126,13 +126,14 @@ def monitor(
             except:
                 print("Temp source not found, try running with --list-temp-sources")
                 showSensor = False
-                
-    mirageFanSensor, mirageFanIndex = mirageFan.split("/")
-    mirageFanIndex = int(mirageFanIndex)
-    mirageFactors = [float(i) for i in mirageFactors.split(",")]
-    if len(mirageFactors) != 3:
-        mirageFactors = 3 * [mirageFactors[0]]
-    print("Mirage factors:", mirageFactors)
+    
+    if mirage:
+        mirageFanSensor, mirageFanIndex = mirageFan.split("/")
+        mirageFanIndex = int(mirageFanIndex)
+        mirageFactors = [float(i) for i in mirageFactors.split(",")]
+        if len(mirageFactors) != 3:
+            mirageFactors = 3 * [mirageFactors[0]]
+        print("Mirage factors:", mirageFactors)
 
     while True:
         if showSensor:
