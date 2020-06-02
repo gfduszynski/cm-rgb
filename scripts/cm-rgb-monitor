@@ -144,7 +144,7 @@ def monitor(
     while True:
         if showSensor:
             if windows:
-                t = get_temperature_windows()
+                t = getTemperatureWindows()
             else:
                 t = psutil.sensors_temperatures()[sensorGroup][sensorIndex].current
             smoothedTemperture = smoothing * smoothedTemperture + (1-smoothing) * t
