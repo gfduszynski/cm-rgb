@@ -28,9 +28,15 @@ def print_available_sources(ctx,value):
 
         ctx.exit()
         
-def get_temperature_windows():
+def getTemperatureWindows():
+    print("Temperature visualization not implemented on Windows")
     raise NotImplementedError
     return temperature
+
+def getFanSpeedWindows():
+    print("Fan speed not implemented on Windows")
+    raise NotImplementedError
+    return fanSpeed
 
 @click.command()
 @click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
@@ -156,7 +162,10 @@ def monitor(
             freqs = psutil.cpu_freq(percpu=True)
             maxFreq = max(i.current for i in freqs)
             smoothedCPUFrequency = smoothing * smoothedCPUFrequency + (1 - smoothing) * maxFreq
-            interp_f = max(0, min(1, (smoothedCPUFrequency-2200)/(3700-2200)))            
+            try:
+                interp_f = max(0, min(1, (smoothedCPUFrequency-psutil.cpu_freq().min)/(psutil.cpu_freq().max-psutil.cpu_freq().min)))
+            except ZeroDivisionError:
+                interp_f = 0.5          
             color = [
                 int(interp_f * fHighColor[i] + (1 - interp_f)*fLowColor[i])
                 for i in range(3)
@@ -168,8 +177,10 @@ def monitor(
             c.set_channel(LedChannel.LOGO, LedMode.STATIC, b, color[0], color[1], color[2])
             
         if mirage:
-            # print(psutil.sensors_fans())
-            fans = psutil.sensors_fans()
+            if windows:
+                fans = getFanSpeedWindows()
+            else:
+                fans = psutil.sensors_fans()
             currentFanFreq = fans[mirageFanSensor][mirageFanIndex].current/60
             smoothedFanFrequency = smoothing * smoothedFanFrequency + (1-smoothing) * currentFanFreq
             mirageFrequencies = [smoothedFanFrequency * i for i in mirageFactors]
