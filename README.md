@@ -13,6 +13,10 @@
 ## cm-rgb-gui
 A GUI interface that serves the purpose of simplifying the usage of [cm-rgb](https://github.com/gfduszynski/cm-rgb) by gfduszynski.
 
+### Prerequisites
+* [Python](https://www.python.org/) 3.x (most likely it is already installed)
+* [PyGObject](https://wiki.gnome.org/action/show/Projects/PyGObject)
+
 ### How to use
 1. Install cm-rgb following the guide listed below
 
