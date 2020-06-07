@@ -7,10 +7,23 @@
 
 ### Control your Wraith Prism RGB on Linux, Mac OS and Windows
 
+## Screenshots
 ![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
 
 **cm-rgb-monitor** _showing realtime cpu utilization._
 
+## cm-rgb-gui
+A GUI interface that serves the purpose of simplifying the usage of cm-rgb-cli by gfduszynski.
+
+### How to use
+1. Install cm-rgb following the guide listed below
+
+2. Download the cm-rgb-gui script [here](https://github.com/groovykiwi/cm-rgb/raw/master/cm-rgb-gui)
+
+3. Run ```sudo cm-rgb-gui``` in whichever directory the script is located (if it is not run with sudo the changes will not be applied). Optionally put in in one of your PATH folders for easy access.
+
+All applied changes are automatically persistent.
+To disable a specific component just leave the color field blank or set it to pure black (#000000).
 
 ## Getting started
 ### Installation & Configuration
