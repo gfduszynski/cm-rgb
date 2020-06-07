@@ -1,4 +1,4 @@
-# cm-rgb
+# cm-rgb-gui
 [![Version](https://img.shields.io/pypi/v/cm-rgb?style=for-the-badge)](https://pypi.org/project/cm-rgb/)
 [![Licence](https://img.shields.io/github/license/gfduszynski/cm-rgb?color=blue&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
 [![Downloads](https://img.shields.io/pypi/dm/cm-rgb?&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
