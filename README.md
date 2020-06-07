@@ -8,7 +8,7 @@
 ### Control your Wraith Prism RGB on Linux, Mac OS and Windows
 
 ## Screenshots
-![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/gui-ss.png)
+![Picture](https://github.com/gfduszynski/cm-rgb/raw/master/gui-ss.png)
 
 **cm-rgb-monitor** _showing realtime cpu utilization._
 
