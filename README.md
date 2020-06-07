@@ -11,7 +11,7 @@
 ![Picture](https://github.com/groovykiwi/cm-rgb-gui/raw/master/gui-ss.png)
 
 ## cm-rgb-gui
-A GUI interface that serves the purpose of simplifying the usage of cm-rgb-cli by gfduszynski.
+A GUI interface that serves the purpose of simplifying the usage of [cm-rgb](https://github.com/gfduszynski/cm-rgb) by gfduszynski.
 
 ### How to use
 1. Install cm-rgb following the guide listed below
