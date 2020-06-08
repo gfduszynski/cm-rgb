@@ -308,7 +308,7 @@ class myWindow(Gtk.Window):
             #print("Ring:",final_ring_mode,final_ring_brightness,final_ring_speed,final_ring_color)
 
             #Final Command
-            final_command = "cm-rgb-cli set logo --mode=" + final_logo_mode + " --color=" + final_logo_color + " --brightness=" + final_logo_brightness + " --speed=" + final_logo_speed + " fan --mode=" + final_fan_mode + " --color=" + final_fan_color + " --brightness=" + final_fan_brightness + " --speed=" + final_fan_speed + " ring --mode=" + final_ring_mode + " --color=" + final_ring_color + " --brightness=" + final_ring_brightness + " --speed=" + final_ring_speed
+            final_command = "cm-rgb-cli set logo --mode=" + final_logo_mode + " --color=" + final_logo_color + " --brightness=" + final_logo_brightness + " --speed=" + final_logo_speed + " fan --mode=" + final_fan_mode + " --color=" + final_fan_color + " --brightness=" + final_fan_brightness + " --speed=" + final_fan_speed + " ring --mode=" + final_ring_mode + " --color=" + final_ring_color + " --brightness=" + final_ring_brightness + " --speed=" + final_ring_speed + " save"
            
             os.system(final_command)
             print("\nCommand ran: "+ final_command)
