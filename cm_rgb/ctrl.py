@@ -84,6 +84,7 @@ class CMRGBController:
         return self.send_packet(self.P_LED_SAVE)
 
     def restore(self):
+        self.send_packet(self.enableMirage(0,0,0))
         self.send_packet(self.P_LED_LOAD)
         self.send_packet(self.P_POWER_OFF)
         self.send_packet(self.P_RESTORE)
