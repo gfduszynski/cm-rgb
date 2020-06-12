@@ -4,6 +4,14 @@ import psutil
 import atexit
 import time
 import click
+import wmi
+import os
+from statistics import mean
+
+if os.name == "nt":
+    windows = True 
+else:
+    windows = False
 
 import os
 if os.name == "nt":
@@ -29,8 +37,17 @@ def print_available_sources(ctx,value):
         ctx.exit()
         
 def getTemperatureWindows():
-    print("Temperature visualization not implemented on Windows")
-    raise NotImplementedError
+    w = wmi.WMI(namespace="root\OpenHardwareMonitor")
+    sensors = w.Sensor()
+    cpu_temps = []
+    gpu_temp = 0
+    for sensor in sensors:
+        if sensor.SensorType=='Temperature' and not 'GPU' in sensor.Name:
+            cpu_temps += [float(sensor.Value)]
+            
+        elif sensor.SensorType=='Temperature' and 'GPU' in sensor.Name:
+            gpu_temp = sensor.Value
+    temperature = cpu_temps[1]
     return temperature
 
 def getFanSpeedWindows():
@@ -39,19 +56,19 @@ def getFanSpeedWindows():
     return fanSpeed
 
 @click.command()
-@click.option("--bg-color", "bgColor", default="#00FFFF", help="Background LED's color")
-@click.option("--cpu-color", "cpuColor", default="#FFA500", help="Color of the cpu load LED's")
-@click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=3)
+@click.option("--bg-color", "bgColor", default="#000000", help="Background LED's color")
+@click.option("--cpu-color", "cpuColor", default="#FFFFFF", help="Color of the cpu load LED's")
+@click.option("--brightness", type=click.IntRange(1, 5, clamp=True), default=4)
 @click.option("--interval", type=click.FloatRange(0.01, 60, clamp=True), default=0.2)
 
 @click.option("--verbose", "verbose", is_flag=True, help="Print cpu load and sensor readout")
 
 @click.option("--show-temp", "showSensor", is_flag=True, help="Show temperature of selected sensor on cpu fan")
 @click.option("--temp-source", "tempSource", type=str, default="k10temp/Tdie", help="Temperature source <chip>/<feature> (eg. \"k10temp/Tdie\")")
-@click.option("--temp-low", "low", type=float, default=45, help="Temperature considered low")
-@click.option("--temp-high", "high", type=float, default=85, help="Temperature considered high")
-@click.option("--temp-low-color", "tLowColor", default="#00FFFF", help="Color representing low temperature")
-@click.option("--temp-high-color", "tHighColor", default="#FFA500", help="Color representing high temperature")
+@click.option("--temp-low", "low", type=float, default=50, help="Temperature considered low")
+@click.option("--temp-high", "high", type=float, default=80, help="Temperature considered high")
+@click.option("--temp-low-color", "tLowColor", default="#0000ff", help="Color representing low temperature")
+@click.option("--temp-high-color", "tHighColor", default="#ff0000", help="Color representing high temperature")
 
 @click.option("--show-cpu-frequency", "showCPUFreq", is_flag=True, help="Show CPU frequency on logo")
 @click.option("--freq-low-color", "fLowColor", default="#00FFFF", help="Color representing low frequency")
@@ -86,7 +103,7 @@ def monitor(
         ):
     c = CMRGBController()
 
-    c.disableMirage()
+    # c.disableMirage() ## Fails with this uncommented
 
     bgChannel = LedChannel.R_STATIC
     cpuChannel = LedChannel.R_SWIRL
@@ -118,8 +135,7 @@ def monitor(
     smoothedCPUFrequency = 3000
     smoothedFanFrequency = 50
     smoothedTemperture = 45
-    
-    
+
     if showSensor:
         if not windows:
             try:
