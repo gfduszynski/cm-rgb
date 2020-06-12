@@ -13,6 +13,12 @@ if os.name == "nt":
 else:
     windows = False
 
+import os
+if os.name == "nt":
+    windows = True 
+else:
+    windows = False
+
 def print_available_sources(ctx,value):
     if value:
         print("Available sensors:")
@@ -42,9 +48,6 @@ def getTemperatureWindows():
         elif sensor.SensorType=='Temperature' and 'GPU' in sensor.Name:
             gpu_temp = sensor.Value
     temperature = cpu_temps[1]
-    # temperature = cpu_temps
-    print(temperature)
-    # raise NotImplementedError ## Fails with this uncommented
     return temperature
 
 def getFanSpeedWindows():
@@ -132,8 +135,7 @@ def monitor(
     smoothedCPUFrequency = 3000
     smoothedFanFrequency = 50
     smoothedTemperture = 45
-    
-    
+
     if showSensor:
         if not windows:
             try:
