@@ -158,16 +158,22 @@ def version(ctx):
 @main_group.command('add-udev-rule')
 @click.pass_context
 def add_udev_rule(ctx):
-
-    import subprocess
+    import os
     rule = "SUBSYSTEM==\"usb\", ATTR{idVendor}==\"2516\", ATTR{idProduct}==\"0051\", TAG+=\"uaccess\", TAG+=\"udev-acl\""
-    cmd = "/usr/bin/sudo echo '"+rule+"' > /etc/udev/rules.d/60-cm-rgb.rules"
-    returncode = subprocess.call(cmd.split())
-    if returncode == 0:
-        print("Created /etc/udev/rules.d/60-cm-rgb.rules")
-        print("udev should apply new rule automatically. If not, try running 'sudo udevadm trigger'.")    
+    if os.geteuid() == 0:
+        try: 
+            with open("/etc/udev/rules.d/60-cm-rgb.rules","w") as f:
+                f.write(rule)
+                print("Created /etc/udev/rules.d/60-cm-rgb.rules")
+                print("udev should apply new rule automatically. If not, try running 'sudo udevadm trigger'.")
+        
+        except:
+            print("Failed to create /etc/udev/rules.d/60-cm-rgb.rules")
+            raise
     else:
-        print('Failed to create /etc/udev/rules.d/60-cm-rgb.rules')
+        print("This command must be run as root in order to create udev rule. (sudo cm-rgb-cli add-udev-rule)")
+        print("You can also do this manually by creating /etc/udev/rules.d/60-cm-rgb.rules with following content:")
+        print(rule)
 
 main_group.add_command(setup_group,'set')
 

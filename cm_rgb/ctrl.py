@@ -61,7 +61,14 @@ class CMRGBController:
             raise Exception("No devices found. See: https://github.com/gfduszynski/cm-rgb/issues/9")
 
         self.device = hid.device()
-        self.device.open_path(device_list[0]["path"])
+
+        try:
+            self.device.open_path(device_list[0]["path"])
+        except OSError as err:
+            print("Failed to access usb device. See: https://github.com/gfduszynski/cm-rgb/wiki/1.-Installation-&-Configuration#3-configuration")
+            print("Also check if other process is not using the device.\n")
+            raise
+
 
     def __init_controller(self):
         # Without this controller wont accept changes
