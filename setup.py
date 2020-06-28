@@ -29,6 +29,7 @@ setup(
     install_requires=[
           'hidapi',
           'click' ,
-          'psutil'
+          'psutil',
+          'PyGObject'
     ],
 )
