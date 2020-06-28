@@ -1,0 +1,253 @@
+#!/usr/bin/env python
+
+import os
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+
+class myWindow(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self, title="CM RGB MONITOR")
+        Gtk.Window.set_resizable(self, 0)
+        self.set_border_width(10)
+
+
+        #Grid 
+        grid = Gtk.Grid()
+        grid.set_row_spacing(20)
+        grid.set_column_spacing(20)
+        self.add(grid)
+
+        #BG Color Picker
+        bg_label = Gtk.Label(label="Background Color: ")
+        grid.attach(bg_label, 0,0,1,1)
+
+        color = Gdk.RGBA()
+        color.parse('#00FFFF') #Default color
+        color.to_string()
+
+        bg_color = Gtk.ColorButton.new_with_rgba(color)
+        grid.attach(bg_color, 1,0,1,1)
+
+        #FG Color Picker
+        fg_label = Gtk.Label(label="CPU Load Color: ")
+        grid.attach(fg_label, 0,1,1,1)
+
+        color = Gdk.RGBA()
+        color.parse('#FFA500') #Default color
+        color.to_string()
+
+        fg_color = Gtk.ColorButton.new_with_rgba(color)
+        grid.attach(fg_color, 1,1,1,1)
+
+        #Brightness
+        bright_label = Gtk.Label(label="Brightness: ")
+        grid.attach(bright_label, 0,2,1,1)
+
+        bright = Gtk.SpinButton.new_with_range(0,5,1)
+        bright.set_value (4)
+        grid.attach(bright, 1,2,1,1)
+
+        #Interval
+        interval_label = Gtk.Label(label="Interval: ")
+        interval_label.set_tooltip_text("Time in seconds between each update") 
+        grid.attach(interval_label, 0,3,1,1)
+
+        interval = Gtk.SpinButton.new_with_range(0.1,60,0.1)
+        interval.set_digits(1)
+        interval.set_value (0.2)
+        grid.attach(interval, 1,3,1,1)
+
+
+
+        #Show temperature on fan 
+        temp_label  = Gtk.Label(label="Show Temperature: ")
+        temp_label.set_tooltip_text("Show CPU temperature on the fan")
+        grid.attach(temp_label, 0,4,1,1)
+
+        status = Gtk.ListStore(str)
+        status.append(["Disabled"])
+        status.append(["Enabled"])
+
+        temp_status = Gtk.ComboBox().new_with_model(status)
+        temp_status.set_active(0)
+        renderer_text = Gtk.CellRendererText()
+        temp_status.pack_start(renderer_text, True)
+        temp_status.add_attribute(renderer_text, "text", 0)
+        grid.attach(temp_status, 1,4,1,1)
+
+
+        #Temperature Options
+        
+        def temp_options(x):
+
+            if temp_status.get_active() == 1:
+
+                #Separator
+                global sep
+                sep = Gtk.Separator()
+                grid.attach(sep, 3,0,1,7)
+                sep.show()
+
+                #Low Temp
+                global ltemp_label
+                ltemp_label = Gtk.Label(label="Low Temperature: ")
+                ltemp_label.set_tooltip_text("Temperature considered low") 
+                grid.attach(ltemp_label, 4,0,1,1)
+
+                global ltemp
+                ltemp = Gtk.SpinButton.new_with_range(0,100,1)
+                ltemp.set_value (50)
+                grid.attach(ltemp, 5,0,1,1)
+
+                ltemp_label.show()
+                ltemp.show()
+
+                #Low Temp color
+                global lcolor
+                color = Gdk.RGBA()
+                color.parse('#00FFFF') #Default color
+                color.to_string()
+
+                lcolor = Gtk.ColorButton.new_with_rgba(color)
+                grid.attach(lcolor, 6,0,1,1)
+
+                lcolor.show()
+
+                #High Temp
+                global htemp_label
+                htemp_label = Gtk.Label(label="High Temperature: ")
+                htemp_label.set_tooltip_text("Temperature considered high") 
+                grid.attach(htemp_label, 4,1,1,1)
+
+                global htemp
+                htemp = Gtk.SpinButton.new_with_range(0,100,1)
+                htemp.set_value (80)
+                grid.attach(htemp, 5,1,1,1)
+
+                htemp_label.show()
+                htemp.show()
+
+                #Low Temp color
+                global hcolor
+                color = Gdk.RGBA()
+                color.parse('#FFA500') #Default color
+                color.to_string()
+
+                hcolor = Gtk.ColorButton.new_with_rgba(color)
+                grid.attach(hcolor, 6,1,1,1)
+
+                hcolor.show()
+
+                #Sensor List
+                global py_sensors_list
+                sensors = os.popen("cm-rgb-monitor --list-temp-sources | sed '/Available sensors:/d' | cut -d' ' -f1").readlines()
+                sensors_list = Gtk.ListStore(str)
+                py_sensors_list = []
+                for line in sensors:
+                    sensors_list.append([line])
+                    py_sensors_list.append(line)
+
+                global sensor_label
+                sensor_label  = Gtk.Label(label="CPU sensor: ")
+                sensor_label.set_tooltip_text("Select the sensor to be used for the temperature")
+                grid.attach(sensor_label, 4,2,1,1)
+                
+                sensor_label.show()
+
+                global sensors_box
+                sensors_box = Gtk.ComboBox().new_with_model(sensors_list)
+                sensors_box.set_active(0)
+                renderer_text = Gtk.CellRendererText()
+                sensors_box.pack_start(renderer_text, True)
+                sensors_box.add_attribute(renderer_text, "text", 0)
+                grid.attach(sensors_box, 5,2,1,1)
+
+                sensors_box.show()
+
+            else:
+                sep.hide()
+                
+                ltemp_label.hide()
+                ltemp.hide()
+                lcolor.hide()
+
+                htemp_label.hide()
+                htemp.hide()
+                hcolor.hide()
+
+                sensor_label.hide()
+                sensors_box.hide()
+
+        temp_status.connect("changed", temp_options)
+
+        
+
+
+        def apply_clicked(self):
+
+            def rgb_to_hex(rgb):
+                red = int(rgb.red * 255)
+                green = int(rgb.green * 255)
+                blue = int(rgb.blue * 255)
+                return '%02x%02x%02x' % (red,green,blue)
+
+            if temp_status.get_active() == 0: #Disabled Temp
+                
+                brightness = bright.get_text()
+                f_interval = interval.get_text()
+                f_bg_color = rgb_to_hex(bg_color.get_rgba())
+                f_fg_color = rgb_to_hex(fg_color.get_rgba())
+
+                command = "cm-rgb-monitor --brightness "+ brightness+ " --interval "+ f_interval+ " --bg-color " + f_bg_color + " --cpu-color "+ f_fg_color + " &"
+                print("Command ran: " + command)
+                os.system("killall cm-rgb-monitor")
+                os.system(command)
+
+            elif temp_status.get_active() == 1: #Enabled Temp
+
+                brightness = bright.get_text()
+                f_interval = interval.get_text()
+                f_bg_color = rgb_to_hex(bg_color.get_rgba())
+                f_fg_color = rgb_to_hex(fg_color.get_rgba())
+
+                f_ltemp = ltemp.get_text()
+                f_htemp = htemp.get_text()
+                f_lcolor = rgb_to_hex(lcolor.get_rgba())
+                f_hcolor = rgb_to_hex(hcolor.get_rgba())
+
+                sensor_selected = py_sensors_list[sensors_box.get_active()].strip()
+
+                command = "cm-rgb-monitor --brightness "+ brightness + " --interval "+ f_interval+ " --bg-color " + f_bg_color + " --cpu-color "+ f_fg_color + " --show-temp " + " --temp-low " + f_ltemp + " --temp-high " + f_htemp + " --temp-low-color " + f_lcolor + " --temp-high-color " + f_hcolor + " --temp-source " + sensor_selected +" &"
+                print("Command ran: " + command)
+                os.system("killall cm-rgb-monitor 2>/dev/null")
+                os.system(command)
+            else:
+                print("ERROR: Show temperature value not set")
+
+        def disable_clicked(self):
+            print("\nKilled cm-rgb-monitor")
+            os.system("killall cm-rgb-monitor")
+            os.system("cm-rgb-cli set logo --mode=off save") #Otherwise, it gets stuck on the monitor colors
+
+        def open_cm(self):
+            os.system("cm-rgb-gui &")
+
+        btn_disable = Gtk.Button(label="Stop CM Monitor")
+        btn_disable.connect("clicked", disable_clicked)
+        grid.attach(btn_disable, 0,5,1,1)
+
+        btn_apply = Gtk.Button(label="Apply")
+        btn_apply.connect("clicked", apply_clicked)
+        grid.attach(btn_apply, 0,6,2,1)
+
+        btn_opencm = Gtk.Button(label="Open CM-RGB")
+        btn_opencm.connect("clicked", open_cm)
+        grid.attach(btn_opencm, 1,5,1,1)
+
+win = myWindow()
+win.connect("destroy", Gtk.main_quit)
+win.show_all()
+Gtk.main()
+
