@@ -8,10 +8,10 @@
 ### Control your Wraith Prism RGB on Linux, Mac OS and Windows
 
 ## Screenshots
-![Picture](https://github.com/groovykiwi/cm-rgb-gui/raw/master/gui-ss.png)
+![Picture](https://github.com/groovykiwi/cm-rgb-gui/raw/master/screenshot.png)
 
 ## cm-rgb-gui
-A GUI interface that serves the purpose of simplifying the usage of [cm-rgb](https://github.com/gfduszynski/cm-rgb) by gfduszynski.
+GUI interfaces that serve the purpose of simplifying the usage of [cm-rgb](https://github.com/gfduszynski/cm-rgb) by gfduszynski.
 
 ### Prerequisites
 * [Python](https://www.python.org/) 3.x (most likely it is already installed)
@@ -20,12 +20,17 @@ A GUI interface that serves the purpose of simplifying the usage of [cm-rgb](htt
 ### How to use
 1. Install cm-rgb following the guide listed below
 
-2. Download the cm-rgb-gui script [here](https://github.com/groovykiwi/cm-rgb-gui/raw/master/cm-rgb-gui)
+2. Download the [cm-rgb-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-gui) and [cm-rgb-monitor-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-monitor-gui) scripts
 
-3. Run ```sudo cm-rgb-gui``` in whichever directory the script is located (if it is not run with sudo the changes will not be applied). Optionally put in in one of your PATH folders for easy access.
+3. Run ```sudo cm-rgb-gui``` or ```sudo cm-rgb-monitor-gui```  in whichever directory the script is located (if it is not run with sudo the changes will not be applied). Optionally put in in one of your PATH folders for easy access.
 
-All applied changes are automatically persistent.
+#### cm-rgb-gui
+All applied changes are automatically persistent.  
 To disable a specific component just leave the color field blank or set it to pure black (#000000).
+
+#### cm-rgb-monitor-gui
+I'm pretty sure this script works exclusively on Linux as it makes use of basic linux commands (sed, cut) and bashism.  
+If the **show temperature on fan option** is disabled, the previous color and mode of the fan will remain. Be sure to set it before using cm-rgb-monitor-gui
 
 ## Getting started
 ### Installation & Configuration
