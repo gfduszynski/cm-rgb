@@ -1,4 +1,4 @@
-# cm-rgb
+# cm-rgb-gui
 [![Version](https://img.shields.io/pypi/v/cm-rgb?style=for-the-badge)](https://pypi.org/project/cm-rgb/)
 [![Licence](https://img.shields.io/github/license/gfduszynski/cm-rgb?color=blue&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
 [![Downloads](https://img.shields.io/pypi/dm/cm-rgb?&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
@@ -7,10 +7,25 @@
 
 ### Control your Wraith Prism RGB on Linux, Mac OS and Windows
 
-![Picutre](https://github.com/gfduszynski/cm-rgb/raw/master/cm-rgb-monitor.gif)
+## Screenshots
+![Picture](https://github.com/groovykiwi/cm-rgb-gui/raw/master/gui-ss.png)
 
-**cm-rgb-monitor** _showing realtime cpu utilization._
+## cm-rgb-gui
+A GUI interface that serves the purpose of simplifying the usage of [cm-rgb](https://github.com/gfduszynski/cm-rgb) by gfduszynski.
 
+### Prerequisites
+* [Python](https://www.python.org/) 3.x (most likely it is already installed)
+* [PyGObject](https://wiki.gnome.org/action/show/Projects/PyGObject)
+
+### How to use
+1. Install cm-rgb following the guide listed below
+
+2. Download the cm-rgb-gui script [here](https://github.com/groovykiwi/cm-rgb-gui/raw/master/cm-rgb-gui)
+
+3. Run ```sudo cm-rgb-gui``` in whichever directory the script is located (if it is not run with sudo the changes will not be applied). Optionally put in in one of your PATH folders for easy access.
+
+All applied changes are automatically persistent.
+To disable a specific component just leave the color field blank or set it to pure black (#000000).
 
 ## Getting started
 ### Installation & Configuration
