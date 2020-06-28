@@ -21,6 +21,7 @@ class myWindow(Gtk.Window):
 
         #BG Color Picker
         bg_label = Gtk.Label(label="Background Color: ")
+        bg_label.set_xalign(0)
         grid.attach(bg_label, 0,0,1,1)
 
         color = Gdk.RGBA()
@@ -32,6 +33,7 @@ class myWindow(Gtk.Window):
 
         #FG Color Picker
         fg_label = Gtk.Label(label="CPU Load Color: ")
+        fg_label.set_xalign(0)
         grid.attach(fg_label, 0,1,1,1)
 
         color = Gdk.RGBA()
@@ -43,6 +45,7 @@ class myWindow(Gtk.Window):
 
         #Brightness
         bright_label = Gtk.Label(label="Brightness: ")
+        bright_label.set_xalign(0)
         grid.attach(bright_label, 0,2,1,1)
 
         bright = Gtk.SpinButton.new_with_range(0,5,1)
@@ -51,6 +54,7 @@ class myWindow(Gtk.Window):
 
         #Interval
         interval_label = Gtk.Label(label="Interval: ")
+        interval_label.set_xalign(0)
         interval_label.set_tooltip_text("Time in seconds between each update") 
         grid.attach(interval_label, 0,3,1,1)
 
@@ -59,12 +63,23 @@ class myWindow(Gtk.Window):
         interval.set_value (0.2)
         grid.attach(interval, 1,3,1,1)
 
+        #Smoothing
+        smoothing_label = Gtk.Label(label="Smoothing: ")
+        smoothing_label.set_xalign(0)
+        smoothing_label.set_tooltip_text("Smoothing of measured values to make color less jumpy") 
+        grid.attach(smoothing_label, 0,4,1,1)
+
+        smoothing = Gtk.SpinButton.new_with_range(0,1,0.1)
+        smoothing.set_digits(1)
+        smoothing.set_value (0.8)
+        grid.attach(smoothing, 1,4,1,1)
+
 
 
         #Show temperature on fan 
         temp_label  = Gtk.Label(label="Show Temperature: ")
         temp_label.set_tooltip_text("Show CPU temperature on the fan")
-        grid.attach(temp_label, 0,4,1,1)
+        grid.attach(temp_label, 0,5,1,1)
 
         status = Gtk.ListStore(str)
         status.append(["Disabled"])
@@ -75,24 +90,30 @@ class myWindow(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         temp_status.pack_start(renderer_text, True)
         temp_status.add_attribute(renderer_text, "text", 0)
-        grid.attach(temp_status, 1,4,1,1)
+        grid.attach(temp_status, 1,5,1,1)
 
 
         #Temperature Options
-        
         def temp_options(x):
 
             if temp_status.get_active() == 1:
 
-                #Separator
-                global sep
-                sep = Gtk.Separator()
-                grid.attach(sep, 3,0,1,7)
-                sep.show()
+                #Separator Vertical
+                global sepv
+                sepv = Gtk.Separator()
+                grid.attach(sepv, 3,0,1,9)
+                sepv.show()
+
+                #Separator Horizontal
+                #global seph
+                #seph = Gtk.Separator()
+                #grid.attach(seph, 4,3,3,1)
+                #seph.show()
 
                 #Low Temp
                 global ltemp_label
                 ltemp_label = Gtk.Label(label="Low Temperature: ")
+                ltemp_label.set_xalign(0)
                 ltemp_label.set_tooltip_text("Temperature considered low") 
                 grid.attach(ltemp_label, 4,0,1,1)
 
@@ -118,6 +139,7 @@ class myWindow(Gtk.Window):
                 #High Temp
                 global htemp_label
                 htemp_label = Gtk.Label(label="High Temperature: ")
+                htemp_label.set_xalign(0)
                 htemp_label.set_tooltip_text("Temperature considered high") 
                 grid.attach(htemp_label, 4,1,1,1)
 
@@ -150,7 +172,8 @@ class myWindow(Gtk.Window):
                     py_sensors_list.append(line)
 
                 global sensor_label
-                sensor_label  = Gtk.Label(label="CPU sensor: ")
+                sensor_label  = Gtk.Label(label="Temperature Sensor: ")
+                sensor_label.set_xalign(0)
                 sensor_label.set_tooltip_text("Select the sensor to be used for the temperature")
                 grid.attach(sensor_label, 4,2,1,1)
                 
@@ -162,12 +185,12 @@ class myWindow(Gtk.Window):
                 renderer_text = Gtk.CellRendererText()
                 sensors_box.pack_start(renderer_text, True)
                 sensors_box.add_attribute(renderer_text, "text", 0)
-                grid.attach(sensors_box, 5,2,1,1)
+                grid.attach(sensors_box, 5,2,2,1)
 
                 sensors_box.show()
 
             else:
-                sep.hide()
+                sepv.hide()
                 
                 ltemp_label.hide()
                 ltemp.hide()
@@ -183,6 +206,147 @@ class myWindow(Gtk.Window):
         temp_status.connect("changed", temp_options)
 
         
+        #Show frequency on logo
+        freq_label  = Gtk.Label(label="Show Frequency: ")
+        freq_label.set_xalign(0)
+        freq_label.set_tooltip_text("Show CPU frequency on the logo")
+        grid.attach(freq_label, 0,6,1,1)
+
+        freq_status = Gtk.ComboBox().new_with_model(status)
+        freq_status.set_active(0)
+        renderer_text = Gtk.CellRendererText()
+        freq_status.pack_start(renderer_text, True)
+        freq_status.add_attribute(renderer_text, "text", 0)
+        grid.attach(freq_status, 1,6,1,1)
+
+        #Frequency Options
+        def freq_options(x):
+
+            if freq_status.get_active() == 1:
+                #Low Freq Color
+                global lfreq_label
+                lfreq_label = Gtk.Label(label="Low Frequency: ")
+                lfreq_label.set_xalign(0)
+                lfreq_label.set_tooltip_text("Color representing low frequency") 
+                lfreq_label.set_xalign(0)
+                grid.attach(lfreq_label, 4,3,1,1)
+
+                global freq_lcolor
+                color = Gdk.RGBA()
+                color.parse('#00FFFF') #Default color
+                color.to_string()
+
+                freq_lcolor = Gtk.ColorButton.new_with_rgba(color)
+                grid.attach(freq_lcolor, 5,3,2,1)
+
+                lfreq_label.show()
+                freq_lcolor.show()
+
+                #Low Freq Color
+                global hfreq_label
+                hfreq_label = Gtk.Label(label="High Frequency: ")
+                hfreq_label.set_xalign(0)
+                hfreq_label.set_tooltip_text("Color representing high frequency") 
+                hfreq_label.set_xalign(0)
+                grid.attach(hfreq_label, 4,4,1,1)
+
+                global freq_hcolor
+                color = Gdk.RGBA()
+                color.parse('#FFA500') #Default color
+                color.to_string()
+
+                freq_hcolor = Gtk.ColorButton.new_with_rgba(color)
+                grid.attach(freq_hcolor, 5,4,2,1)
+
+                hfreq_label.show()
+                freq_hcolor.show()
+
+            else:
+
+                lfreq_label.hide()
+                freq_lcolor.hide()
+                hfreq_label.hide()
+                freq_hcolor.hide()
+          
+        freq_status.connect("changed", freq_options)
+
+
+        #Mirage
+
+        mirage_label  = Gtk.Label(label="Mirage: ")
+        mirage_label.set_xalign(0)
+        mirage_label.set_tooltip_text("""Mirage effect depending on fan speed
+Be sure to stop and then re-apply to update mirage settings""")
+        grid.attach(mirage_label, 0,7,1,1)
+
+        mirage_status = Gtk.ComboBox().new_with_model(status)
+        mirage_status.set_active(0)
+        renderer_text = Gtk.CellRendererText()
+        mirage_status.pack_start(renderer_text, True)
+        mirage_status.add_attribute(renderer_text, "text", 0)
+        grid.attach(mirage_status, 1,7,1,1)
+
+        def mirage_options(x):
+
+            if mirage_status.get_active() == 1:
+
+                #Mirage Factors
+                global mirage_factors_label
+                mirage_factors_label  = Gtk.Label(label="Mirage factors: ")
+                mirage_factors_label.set_xalign(0)
+                mirage_factors_label.set_tooltip_text("""Fan speed to mirage frequency factor(s)
+Format: [float] or [float],[float],[float]""")
+                grid.attach(mirage_factors_label, 4,5,1,1)
+
+                global mirage_factors
+                mirage_factors = Gtk.Entry()
+                mirage_factors.set_text("7.0,7.0,7.0")
+                grid.attach(mirage_factors, 5,5,2,1)
+
+                mirage_factors_label.show()
+                mirage_factors.show()
+
+                #Mirage Sensor List
+                global py_msensors_list
+                msensors = os.popen("cm-rgb-monitor --list-temp-sources | sed -n '/Available fan/,$p' | cut -d' ' -f1 | sed -s '/Available/d'").readlines()
+                msensors_list = Gtk.ListStore(str)
+                py_msensors_list = []
+                for line in msensors:
+                    msensors_list.append([line])
+                    py_msensors_list.append(line)
+
+                global msensor_label
+                msensor_label  = Gtk.Label(label="Fan Sensor: ")
+                msensor_label.set_xalign(0)
+                msensor_label.set_tooltip_text("Select the sensor to be used for fan speed")
+                grid.attach(msensor_label, 4,6,1,1)
+                
+                msensor_label.show()
+
+                global msensors_box
+                msensors_box = Gtk.ComboBox().new_with_model(msensors_list)
+                msensors_box.set_active(0)
+                renderer_text = Gtk.CellRendererText()
+                msensors_box.pack_start(renderer_text, True)
+                msensors_box.add_attribute(renderer_text, "text", 0)
+                grid.attach(msensors_box, 5,6,2,1)
+
+                msensors_box.show()
+
+            else:
+
+                mirage_factors_label.hide()
+                mirage_factors.hide()
+
+                msensor_label.hide()
+                msensors_box.hide()
+
+
+
+
+
+        mirage_status.connect("changed", mirage_options)
+
 
 
         def apply_clicked(self):
@@ -193,38 +357,41 @@ class myWindow(Gtk.Window):
                 blue = int(rgb.blue * 255)
                 return '%02x%02x%02x' % (red,green,blue)
 
-            if temp_status.get_active() == 0: #Disabled Temp
-                
-                brightness = bright.get_text()
-                f_interval = interval.get_text()
-                f_bg_color = rgb_to_hex(bg_color.get_rgba())
-                f_fg_color = rgb_to_hex(fg_color.get_rgba())
 
-                command = "cm-rgb-monitor --brightness "+ brightness+ " --interval "+ f_interval+ " --bg-color " + f_bg_color + " --cpu-color "+ f_fg_color + " &"
-                print("Command ran: " + command)
-                os.system("killall cm-rgb-monitor")
-                os.system(command)
 
-            elif temp_status.get_active() == 1: #Enabled Temp
+            brightness = bright.get_text()
+            f_interval = interval.get_text()
+            f_smoothing = smoothing.get_text()
+            f_bg_color = rgb_to_hex(bg_color.get_rgba())
+            f_fg_color = rgb_to_hex(fg_color.get_rgba())
 
-                brightness = bright.get_text()
-                f_interval = interval.get_text()
-                f_bg_color = rgb_to_hex(bg_color.get_rgba())
-                f_fg_color = rgb_to_hex(fg_color.get_rgba())
+            command = "cm-rgb-monitor --brightness "+ brightness + " --interval "+ f_interval+ " --bg-color " +f_bg_color + " --cpu-color "+ f_fg_color + " --smoothing " +  f_smoothing
 
+            if temp_status.get_active() == 1: # Temp enabled
                 f_ltemp = ltemp.get_text()
                 f_htemp = htemp.get_text()
                 f_lcolor = rgb_to_hex(lcolor.get_rgba())
                 f_hcolor = rgb_to_hex(hcolor.get_rgba())
-
                 sensor_selected = py_sensors_list[sensors_box.get_active()].strip()
+                command += " --show-temp " + " --temp-low " + f_ltemp + " --temp-high " + f_htemp + " --temp-low-color " + f_lcolor + " --temp-high-color " + f_hcolor + " --temp-source " + sensor_selected
 
-                command = "cm-rgb-monitor --brightness "+ brightness + " --interval "+ f_interval+ " --bg-color " + f_bg_color + " --cpu-color "+ f_fg_color + " --show-temp " + " --temp-low " + f_ltemp + " --temp-high " + f_htemp + " --temp-low-color " + f_lcolor + " --temp-high-color " + f_hcolor + " --temp-source " + sensor_selected +" &"
-                print("Command ran: " + command)
-                os.system("killall cm-rgb-monitor 2>/dev/null")
-                os.system(command)
-            else:
-                print("ERROR: Show temperature value not set")
+            if freq_status.get_active() == 1:
+                f_freq_lcolor = rgb_to_hex(freq_lcolor.get_rgba())
+                f_freq_hcolor = rgb_to_hex(freq_hcolor.get_rgba())
+                command += " --show-cpu-frequency" + " --freq-low-color " + f_freq_lcolor + " --freq-high-color " + f_freq_hcolor
+
+            if mirage_status.get_active() == 1:
+                factors = mirage_factors.get_text()
+                msensor_selected = py_msensors_list[msensors_box.get_active()].strip()
+
+                command += " --mirage " + " --mirage-fan " + msensor_selected + " --mirage-factors " + factors
+
+            command += " &"
+
+            print("Command ran: " + command)
+            os.system("killall cm-rgb-monitor 2>/dev/null")
+            os.system(command)
+
 
         def disable_clicked(self):
             print("\nKilled cm-rgb-monitor")
@@ -236,16 +403,17 @@ class myWindow(Gtk.Window):
 
         btn_disable = Gtk.Button(label="Stop CM Monitor")
         btn_disable.connect("clicked", disable_clicked)
-        grid.attach(btn_disable, 0,5,1,1)
-
-        btn_apply = Gtk.Button(label="Apply")
-        btn_apply.connect("clicked", apply_clicked)
-        grid.attach(btn_apply, 0,6,2,1)
+        grid.attach(btn_disable, 0,8,1,1)
 
         btn_opencm = Gtk.Button(label="Open CM-RGB")
         btn_opencm.connect("clicked", open_cm)
-        grid.attach(btn_opencm, 1,5,1,1)
+        grid.attach(btn_opencm, 1,8,1,1)
 
+        btn_apply = Gtk.Button(label="Apply")
+        btn_apply.connect("clicked", apply_clicked)
+        grid.attach(btn_apply, 0,9,2,1)
+
+        
 win = myWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
