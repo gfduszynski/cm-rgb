@@ -142,7 +142,7 @@ class myWindow(Gtk.Window):
 
                 #Sensor List
                 global py_sensors_list
-                sensors = os.popen("cm-rgb-monitor --list-temp-sources | sed '/Available sensors:/d' | cut -d' ' -f1").readlines()
+                sensors = os.popen("cm-rgb-monitor --list-temp-sources | sed -n '/Available sensors:/d ; /Available fan.*/q;p' | cut -d' ' -f1").readlines()
                 sensors_list = Gtk.ListStore(str)
                 py_sensors_list = []
                 for line in sensors:
