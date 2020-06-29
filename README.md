@@ -22,7 +22,7 @@ GUI interfaces that serve the purpose of simplifying the usage of [cm-rgb](https
 
 2. Download the [cm-rgb-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-gui) and [cm-rgb-monitor-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-monitor-gui) scripts
 
-3. Run ```sudo cm-rgb-gui``` or ```sudo cm-rgb-monitor-gui```  in whichever directory the script is located (if it is not run with sudo the changes will not be applied). Optionally put in in one of your PATH folders for easy access.
+3. Run ```./cm-rgb-gui``` or ```./cm-rgb-monitor-gui```  in the scripts directory or whererver you saved it (running it with sudo is not neccessary if you added the udev rule). Optionally put the scripts in /usr/bin for easy access.
 
 #### cm-rgb-gui
 All applied changes are automatically persistent.  

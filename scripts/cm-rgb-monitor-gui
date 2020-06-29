@@ -387,16 +387,16 @@ Format: [float] or [float],[float],[float]""")
                 command += " --mirage " + " --mirage-fan " + msensor_selected + " --mirage-factors " + factors
 
             command += " &"
-
-            print("Command ran: " + command)
+            
             os.system("killall cm-rgb-monitor 2>/dev/null")
             os.system(command)
+            print("Command ran: " + command)
 
 
         def disable_clicked(self):
             print("\nKilled cm-rgb-monitor")
-            os.system("killall cm-rgb-monitor")
-            os.system("cm-rgb-cli set logo --mode=off save") #Otherwise, it gets stuck on the monitor colors
+            os.system("killall cm-rgb-monitor 2>/dev/null")
+            os.system("cm-rgb-cli set logo --mode=off") #Otherwise, it gets stuck on the monitor colors
 
         def open_cm(self):
             os.system("cm-rgb-gui &")
