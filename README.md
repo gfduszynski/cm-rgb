@@ -26,7 +26,7 @@ Package comes with two scripts ``cm-rgb-cli`` and ``cm-rgb-monitor``.
 Check out the [examples in our wiki](https://github.com/gfduszynski/cm-rgb/wiki/2.-CLI-usage).
 
 
-![Picture](https://github.com/groovykiwi/cm-rgb-gui/raw/master/gui-ss.png)
+![Picture](https://github.com/gfduszynski/cm-rgb/raw/master/gui-ss.png)
 ``cm-rgb-gui`` GUI interface that serves the purpose of simplifying the usage of [cm-rgb-cli] (thanks to [groovykiwi](https://github.com/groovykiwi))
 
 ``cm-rgb-monitor`` allows for displaying cpu utilization with ring LED's, along with temperature (thanks to [mpsdskd](https://github.com/mpsdskd)).
