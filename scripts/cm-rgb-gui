@@ -55,6 +55,7 @@ class myWindow(Gtk.Window):
         logo_grid.attach(logo_blabel, 0,2,1,1)
 
         logo_bright = Gtk.SpinButton.new_with_range(0,5,1)
+        logo_bright.set_value(3)
         logo_grid.attach(logo_bright, 1,2,1,1)
 
         #Speed
@@ -118,6 +119,7 @@ class myWindow(Gtk.Window):
         fan_grid.attach(fan_blabel, 0,2,1,1)
 
         fan_bright = Gtk.SpinButton.new_with_range(0,5,1)
+        fan_bright.set_value(3)
         fan_grid.attach(fan_bright, 1,2,1,1)
 
         #Speed
@@ -188,7 +190,9 @@ class myWindow(Gtk.Window):
         ring_grid.attach(ring_blabel, 0,2,1,1)
 
         ring_bright = Gtk.SpinButton.new_with_range(0,5,1)
+        ring_bright.set_value(3)
         ring_grid.attach(ring_bright, 1,2,1,1)
+
 
         #Speed
         global ring_speed
@@ -316,21 +320,17 @@ class myWindow(Gtk.Window):
             os.system(final_command)
             print("\nCommand ran: "+ final_command)
 
-
         def disable_clicked(self):
             print("\nDisabling all RGB")
             os.system("cm-rgb-cli set logo --mode=off save")
-
-
-        btn_apply = Gtk.Button(label="Apply")
-        btn_apply.connect("clicked", apply_clicked)
-        grid.attach(btn_apply, 0,3,1,1)
 
         btn_disable = Gtk.Button(label="Disable all RGB")
         btn_disable.connect("clicked", disable_clicked)
         grid.attach(btn_disable, 0,2,1,1)
 
-
+        btn_apply = Gtk.Button(label="Apply")
+        btn_apply.connect("clicked", apply_clicked)
+        grid.attach(btn_apply, 0,3,1,1)
 
 win = myWindow()
 win.connect("destroy", Gtk.main_quit)
