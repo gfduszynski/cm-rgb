@@ -64,9 +64,9 @@ def setup_logo(ctx, mode, color, brightness, speed):
 @click.option('--mode', type=click.Choice(['off', 'static', 'breathe'], case_sensitive=False), default='static')
 @click.option('--speed', type=click.IntRange(1, 5, clamp=True), default=3)
 @click.option('--brightness', type=click.IntRange(1, 5, clamp=True), default=3)
-@click.option('--mirage-red-freq',   type=click.IntRange(3, 32768, clamp=True), default=0)
-@click.option('--mirage-green-freq', type=click.IntRange(3, 32768, clamp=True), default=0)
-@click.option('--mirage-blue-freq',  type=click.IntRange(3, 32768, clamp=True), default=0)
+@click.option('--mirage-red-freq',   type=click.IntRange(3, 32768, clamp=True))
+@click.option('--mirage-green-freq', type=click.IntRange(3, 32768, clamp=True))
+@click.option('--mirage-blue-freq',  type=click.IntRange(3, 32768, clamp=True))
 @click.pass_context
 def setup_fan(ctx, mode, color, brightness, speed, mirage_red_freq, mirage_green_freq, mirage_blue_freq):
     c = ctx.obj['ctrl']  
@@ -81,7 +81,7 @@ def setup_fan(ctx, mode, color, brightness, speed, mirage_red_freq, mirage_green
     if mode != 'off':
         c.set_channel(LedChannel.FAN, LedMode[mode.upper()], brightness, color[0], color[1], color[2], speed)
         ctx.obj['fChannel'] = LedChannel.FAN
-        ctx.obj['mirage'] = [mirage_red_freq, mirage_green_freq, mirage_blue_freq]
+        ctx.obj['mirage'] = [mirage_red_freq or 0, mirage_green_freq or 0, mirage_blue_freq or 0]
 
 
 @setup_group.command('ring')
