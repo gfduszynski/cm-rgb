@@ -22,7 +22,7 @@ GUI interfaces that serve the purpose of simplifying the usage of [cm-rgb](https
 
 2. Download the [cm-rgb-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-gui) and [cm-rgb-monitor-gui](https://raw.githubusercontent.com/groovykiwi/cm-rgb-gui/master/scripts/cm-rgb-monitor-gui) scripts
 
-3. Run ```./cm-rgb-gui``` or ```./cm-rgb-monitor-gui```  in the scripts directory or whererver you saved it (running it with sudo is not neccessary if you added the udev rule). Optionally put the scripts in /usr/bin for easy access.
+3. Run ```./cm-rgb-gui``` or ```./cm-rgb-monitor-gui```  in the scripts directory or wherever you saved it (running it with sudo is not neccessary if you added the udev rule). Optionally put the scripts in /usr/bin for easy access.
 
 #### cm-rgb-gui
 All applied changes are automatically persistent.  
@@ -30,7 +30,7 @@ To disable a specific component just leave the color field blank or set it to pu
 
 #### cm-rgb-monitor-gui
 I'm pretty sure this script works exclusively on Linux as it makes use of basic linux commands (sed, cut) and bashism.  
-If the **show temperature on fan option** is disabled, the previous color and mode of the fan will remain. Be sure to set it before using cm-rgb-monitor-gui
+If the **show temperature on fan option** is disabled, the previous color and mode of the fan will remain. Be sure to set it before using cm-rgb-gui
 
 ## Getting started
 ### Installation & Configuration
