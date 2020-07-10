@@ -18,7 +18,11 @@ setup(
     keywords = "rgb hid wraith",
     url = "http://github.com/gfduszynski/cm-rgb",
     packages=['cm_rgb'],
-    scripts=['scripts/cm-rgb-cli','scripts/cm-rgb-monitor'],
+    scripts=[
+        'scripts/cm-rgb-cli',
+        'scripts/cm-rgb-gui',
+        'scripts/cm-rgb-monitor'
+    ],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     classifiers=[
