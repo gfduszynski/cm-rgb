@@ -17,7 +17,7 @@ setup(
     license = "MIT",
     keywords = "rgb hid wraith",
     url = "http://github.com/gfduszynski/cm-rgb",
-    packages=['cm_rgb'],
+    packages=['cm-rgb'],
     scripts=['scripts/cm-rgb-cli','scripts/cm-rgb-monitor'],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
