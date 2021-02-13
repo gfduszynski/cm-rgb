@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from cm-rgb.ctrl import LedChannel, LedMode, CMRGBController
+from cm_rgb.ctrl import LedChannel, LedMode, CMRGBController
 import psutil
 import atexit
 import time
