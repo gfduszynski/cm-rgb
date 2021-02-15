@@ -9,8 +9,8 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "cm-rgb",
-    version = "0.3.4",
+    name = "cm_rgb",
+    version = "0.3.5",
     author = "gfduszynski",
     author_email = "gfduszynski@gmail.com",
     description = ("Utility to control RGB on AMD Wraith Prism"),
