@@ -2,7 +2,7 @@
 [![Version](https://img.shields.io/pypi/v/cm-rgb?style=for-the-badge)](https://pypi.org/project/cm-rgb/)
 [![Licence](https://img.shields.io/github/license/gfduszynski/cm-rgb?color=blue&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
 [![Downloads](https://img.shields.io/pypi/dm/cm-rgb?&style=for-the-badge)](https://github.com/gfduszynski/cm-rgb/)
-[![PayPal](https://img.shields.io/badge/PayPal-3$-1abc9c.svg?style=for-the-badge)](https://www.paypal.me/gfduszynski/3USD)
+[![PayPal](https://img.shields.io/badge/PayPal-1$-1abc9c.svg?style=for-the-badge)](https://www.paypal.me/gfduszynski/1USD)
 
 
 ### Control your Wraith Prism RGB on Linux, Mac OS and Windows
