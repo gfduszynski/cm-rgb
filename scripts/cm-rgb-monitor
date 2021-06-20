@@ -16,7 +16,7 @@ else:
     windows = False
 
 
-def print_available_sources(ctx,value):
+def print_available_sources(ctx,param,value):
     if value:
         print("Available sensors:")
         sensorDict = psutil.sensors_temperatures()
